@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog/img/avatar.png">
+  <link rel="icon" type="image/png" href="/blog/img/avatar.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="description" content="Cumulus | 李志豪前端博客">
+  <meta name="author" content="Zhihao Li">
+  <meta name="keywords" content="JS,JavaScript,CSS,HTML5">
+  <title>设计模式系列笔记-代理模式 ~ Cumulus | 李志豪前端博客</title>
+
+  <link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css"  >
+<link rel="stylesheet" href="/blog/lib/bootstrap/css/bootstrap.min.css"  >
+<link rel="stylesheet" href="/blog/lib/mdbootstrap/css/mdb.min.css"  >
+<link rel="stylesheet" href="/blog/lib/github-markdown/github-markdown.min.css"  >
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1067060_qzomjdt8bmp.css">
+
+
+
+  <link rel="stylesheet" href="/blog/lib/prettify/tomorrow-night-eighties.min.css"  >
+
+<link rel="stylesheet" href="/blog/css/main.css"  >
+
+
+  <link rel="stylesheet" href="/blog/lib/fancybox/jquery.fancybox.min.css"  >
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/blog/">&nbsp;<strong>Cumulus | 李志豪前端博客</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/">Home</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/archives/">Archives</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/categories/">Categories</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/tags/">Tags</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/about/">About</a>
+          </li>
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background"
+         style="background: url('/blog/img/default.png')no-repeat center center;
+           background-size: cover;
+           background-attachment: fixed;">
+      <div class="full-bg-img">
+        <div class="mask rgba-black-light flex-center">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <br>
+              
+                <p class="mt-3">
+                  <i class="fas fa-calendar-alt" aria-hidden="true"></i>&nbsp;
+                  Tuesday, September 17th 2019, 11:24 pm
+                </p>
+              
+
+              <p>
+                
+                  
+                  &nbsp;<i class="far fa-chart-bar"></i>
+                  <span class="post-count">
+                    1.5k 字
+                  </span>&nbsp;
+                
+
+                
+                  
+                  &nbsp;<i class="far fa-clock"></i>
+                  <span class="post-count">
+                      6 分钟
+                  </span>&nbsp;
+                
+
+                
+                  <!-- 不蒜子统计文章PV -->
+                  
+                  &nbsp;<i class="far fa-eye" aria-hidden="true"></i>&nbsp;
+                  <span id="busuanzi_container_page_pv">
+                    <span id="busuanzi_value_page_pv"></span> 次
+                  </span>&nbsp;
+                
+              </p>
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="py-5 z-depth-3" id="board">
+        <div class="post-content mx-auto" id="post">
+          <div class="markdown-body">
+            <p><em>写在前面：本系列文章内容为《JavaScript设计模式与开发实践》一书学习笔记，感谢作者曾探</em></p>
+<h2 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a>代理模式</h2><p>代理模式是为一个对象提供一个代用品或占位符，以便控制对它的访问</p>
+<p>代理模式的关键是，当客户不方便直接访问一个对象或者不满足需要的时候，提供一个替身对象来控制对这个对象的访问，客户实际上访问的是替身对象。替身对象对请求做出一些处理之后，再把请求转交给本体对象</p>
+<p>例如 A 访问 B<br>非代理模式：A —&gt; B<br>用代理模式：A —&gt; C —&gt; B</p>
+<h3 id="1-代理模式实现"><a href="#1-代理模式实现" class="headerlink" title="1.代理模式实现"></a>1.代理模式实现</h3><p>举例：小明追求 A，B 为两人共同好友，小明让 B 帮他向 A 送花</p>
+<pre><code>var Flower = function() {};
+var xiaoming = {
+  sendFlower: function(target) {
+    var flower = new Flower();
+    target.receiveFlower(flower);
+  }
+};
+var B = {
+  receiveFlower: function(flower) {
+    A.receiveFlower(flower);
+  }
+};
+var A = {
+  receiveFlower: function(flower) {
+    console.log(&#39;收到花 &#39; + flower);
+  }
+};
+xiaoming.sendFlower(B);</code></pre><p>可以发现此处的代理没有任何作用，这时候我们添加设定，小明希望在 A 心情好的时候送花表白，但是不了解 A 的心情变化，所以让比较了解 A 的 B 帮忙送花</p>
+<pre><code>// 心情好的时候再送花
+var Flower = function() {};
+var xiaoming = {
+  sendFlower: function(target) {
+    var flower = new Flower();
+    target.receiveFlower(flower);
+  }
+};
+var B = {
+  receiveFlower: function(flower) {
+    A.listenGoodMood(function() { // 监听 A 的好心情
+      A.receiveFlower(flower);
+    });
+  }
+};
+var A = {
+  receiveFlower: function(flower) {
+    console.log(&#39;收到花 &#39; + flower);
+  },
+  listenGoodMood: function(fn) {
+    setTimeout(function() { // 假设 10 秒之后 A 的心情变好
+      fn();
+    }, 10000);
+  }
+};
+xiaoming.sendFlower(B);</code></pre><h3 id="2-保护代理和虚拟代理"><a href="#2-保护代理和虚拟代理" class="headerlink" title="2.保护代理和虚拟代理"></a>2.保护代理和虚拟代理</h3><p>保护代理：代理 B 可以帮助 A 过滤掉一些请求，一些请求就可以直接在代理 B处被拒绝掉。这种代理叫作保护代理<br>虚拟代理：虚拟代理把一些开销很大的对象，延迟到真正需要它的时候才去创建，以送花举例，使用虚拟代理可以将买花这一操作放到需要的时候再进行，防止过早的买花，等 A 心情好的时候已经不新鲜了</p>
+<pre><code>var B = {
+  receiveFlower: function(flower) {
+    A.listenGoodMood(function() { // 监听 A 的好心情
+      var flower = new Flower(); // 延迟创建 flower 对象
+      A.receiveFlower(flower);
+    });
+  }
+};</code></pre><p>护代理用于控制不同权限的对象对目标对象的访问，但在 JavaScript 并不容易实现保护代理，因为我们无法判断谁访问了某个对象。而虚拟代理是最常用的一种代理模式</p>
+<h3 id="3-虚拟代理实现图片预加载"><a href="#3-虚拟代理实现图片预加载" class="headerlink" title="3.虚拟代理实现图片预加载"></a>3.虚拟代理实现图片预加载</h3><p>引入代理对象 proxyImage，在图片被真正加载好之前，页面中出现 loading 的 gif 动画, 来提示用户图片正在加载</p>
+<pre><code>var myImage = (function() {
+  var imgNode = document.createElement(&#39;img&#39;);
+  document.body.appendChild(imgNode);
+  return {
+    setSrc: function(src) {
+      imgNode.src = src;
+    }
+  }
+})();
+var proxyImage = (function() {
+  var img = new Image;
+  img.onload = function() {
+    myImage.setSrc(this.src);
+  }
+  return {
+    setSrc: function(src) {
+      myImage.setSrc(&#39;/loading.gif&#39;);
+      img.src = src;
+    }
+  }
+})();
+proxyImage.setSrc(&#39;http://xxxx.jpg&#39;);</code></pre><p>上面这个程序，我们并没有改变或者增加 MyImage 的接口，但是通过代理对象，实际上给系统添加了新的行为，符合开放—封闭原则的<br>给 img 节点设置 src 和图片预加载这两个功能，被隔离在两个对象里，它们可以各自变化而不影响对方</p>
+<h3 id="4-代理和本体接口的一致性"><a href="#4-代理和本体接口的一致性" class="headerlink" title="4.代理和本体接口的一致性"></a>4.代理和本体接口的一致性</h3><p>在客户看来，代理对象和本体是一致的， 代理接手请求的过程对于用户来说是透明的，用户并不清楚代理和本体的区别<br>作用：</p>
+<ul>
+<li>用户可以放心地请求代理，他只关心是否能得到想要的结果</li>
+<li>在任何使用本体的地方都可以替换成使用代理</li>
+</ul>
+<p>如果代理对象和本体对象都为一个函数（函数也是对象），函数必然都能被执行，则可以认为它们也具有一致的“接口”<br>例如：</p>
+<pre><code>var myImage = (function() {
+  var imgNode = document.createElement(&#39;img&#39;);
+  document.body.appendChild(imgNode);
+  return function(src) {
+    imgNode.src = src;
+  }
+})();
+var proxyImage = (function() {
+  var img = new Image;
+  img.onload = function() {
+    myImage(this.src);
+  }
+  return function(src) {
+    myImage(&#39;/loading.gif&#39;);
+    img.src = src;
+  }
+})();
+proxyImage(&#39;http://xxx.jpg&#39;);</code></pre><h3 id="5-代理模式其他应用"><a href="#5-代理模式其他应用" class="headerlink" title="5.代理模式其他应用"></a>5.代理模式其他应用</h3><h5 id="1-虚拟代理合并HTTP请求"><a href="#1-虚拟代理合并HTTP请求" class="headerlink" title="1. 虚拟代理合并HTTP请求"></a>1. 虚拟代理合并HTTP请求</h5><p>可以通过一个代理函数来收集一段时间之内的请求， 最后一次性发送给服务器</p>
+<h5 id="2-缓存代理"><a href="#2-缓存代理" class="headerlink" title="2. 缓存代理"></a>2. 缓存代理</h5><p>编写一个简单的求乘积的程序</p>
+<pre><code>var mult = function(){
+  console.log( &#39;开始计算乘积&#39; );
+  var a = 1;
+  for ( var i = 0, l = arguments.length; i &lt; l; i++ ){
+    a = a * arguments[i];
+  }
+  return a;
+};
+mult( 2, 3 ); // 输出：6
+mult( 2, 3, 4 ); // 输出：24 </code></pre><p>现在加入缓存代理函数：</p>
+<pre><code>var proxyMult = (function(){
+  var cache = {};
+  return function(){
+    var args = Array.prototype.join.call( arguments, &#39;,&#39; );
+    if ( args in cache ){
+      return cache[ args ];
+    }
+    return cache[ args ] = mult.apply( this, arguments );
+  }
+})();
+proxyMult( 1, 2, 3, 4 ); // 输出：24
+proxyMult( 1, 2, 3, 4 ); // 输出：24 </code></pre><p>当我们第二次调用 proxyMult( 1, 2, 3, 4 )的时候，本体 mult 函数并没有被计算，proxyMult直接返回了之前缓存好的计算结果<br>通过增加缓存代理的方式，mult 函数可以继续专注于自身的职责——计算乘积，缓存的功能是由代理对象实现的</p>
+<h5 id="3-用高阶函数动态创建代理"><a href="#3-用高阶函数动态创建代理" class="headerlink" title="3.用高阶函数动态创建代理"></a>3.用高阶函数动态创建代理</h5><p>通过传入高阶函数这种更加灵活的方式，可以为各种计算方法创建缓存代理</p>
+<pre><code>/**************** 计算乘积 *****************/
+var mult = function(){
+  var a = 1;
+  for ( var i = 0, l = arguments.length; i &lt; l; i++ ){
+    a = a * arguments[i];
+  }
+  return a;
+};
+/**************** 计算加和 *****************/
+var plus = function(){
+  var a = 0;
+  for ( var i = 0, l = arguments.length; i &lt; l; i++ ){
+    a = a + arguments[i];
+  }
+  return a;
+};
+/**************** 创建缓存代理的工厂 *****************/
+var createProxyFactory = function( fn ){
+  var cache = {};
+  return function(){
+    var args = Array.prototype.join.call( arguments, &#39;,&#39; );
+    if ( args in cache ){
+      return cache[ args ];
+    }
+    return cache[ args ] = fn.apply( this, arguments );
+  }
+};
+var proxyMult = createProxyFactory( mult ),
+  proxyPlus = createProxyFactory( plus );
+alert ( proxyMult( 1, 2, 3, 4 ) ); // 输出：24
+alert ( proxyMult( 1, 2, 3, 4 ) ); // 输出：24
+alert ( proxyPlus( 1, 2, 3, 4 ) ); // 输出：10
+alert ( proxyPlus( 1, 2, 3, 4 ) ); // 输出：10 </code></pre><p>这些计算方法被当作参数传入一个专门用于创建缓存代理的工厂中， 这样一来，我们就可以为乘法、加法、减法等创建缓存代理</p>
+
+            <hr>
+          </div>
+          <br>
+          <div>
+            <p>
+            
+              <span>
+                <i class="iconfont icon-inbox"></i>
+                
+                  <a class="hover-with-bg" href="/categories/%E5%BC%80%E5%8F%91">开发</a>
+                  &nbsp;
+                
+              </span>&nbsp;&nbsp;
+            
+            
+              <span>
+                <i class="iconfont icon-tag"></i>
+                
+                  <a class="hover-with-bg" href="/tags/JavaScript">JavaScript</a>
+                
+                  <a class="hover-with-bg" href="/tags/JS">JS</a>
+                
+                  <a class="hover-with-bg" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F">设计模式</a>
+                
+              </span>
+            
+            </p>
+            
+              <p class="note note-warning">本博客文章为自用，部分内容来源其它文章博客，请勿转载或用作商业用途！</p>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-none d-lg-block col-lg-2 toc-container">
+      
+  <div id="toc">
+    <p class="h4"><i class="far fa-list-alt"></i>&nbsp;TOC</p>
+    <div id="tocbot"></div>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- custom -->
+
+
+<!-- Comments -->
+<div class="col-lg-7 mx-auto nopadding-md">
+  <div class="container comments mx-auto" id="comments">
+    
+  </div>
+</div>
+
+    
+  </main>
+
+  
+    <a class="z-depth-1" id="scroll-top-button" href="#" role="button">
+      <i class="fa fa-chevron-up scroll-top-arrow" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  <footer class="mt-4">
+  <div class="text-center py-3">
+    <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><b>Hexo</b></a>
+    <i class="iconfont icon-love"></i>
+    <b>lzh</b>
+    <br>
+
+    
+  
+    <!-- 不蒜子统计PV -->
+    
+    &nbsp;<span id="busuanzi_container_site_pv">总访问量 
+          <span id="busuanzi_value_site_pv"></span> 次</span>&nbsp;
+  
+  
+    <!-- 不蒜子统计UV -->
+    
+    &nbsp;<span id="busuanzi_container_site_uv">总访客数 
+            <span id="busuanzi_value_site_uv"></span> 人</span>&nbsp;
+  
+  <br>
+
+
+
+    
+  <!-- 备案信息 -->
+  <a href="http://beian.miit.gov.cn/" target="_blank"
+     rel="nofollow noopener"></a>
+  
+
+
+
+    <!-- cnzz Analytics icon -->
+    
+
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="/blog/lib/jquery/jquery.min.js" ></script>
+<script src="/blog/lib/popper/popper.min.js" ></script>
+<script src="/blog/lib/bootstrap/js/bootstrap.min.js" ></script>
+<script src="/blog/lib/mdbootstrap/js/mdb.min.js" ></script>
+<script src="/blog/js/main.js" ></script>
+
+
+  <script src="/blog/js/lazyload.js" ></script>
+
+
+
+  
+    <script src="/blog/lib/tocbot/tocbot.min.js" ></script>
+  
+  <script src="/blog/js/post.js" ></script>
+
+
+
+  <script src="/blog/lib/smooth-scroll/smooth-scroll.min.js" ></script>
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+<!-- Plugins -->
+
+
+  
+
+  
+
+  
+
+  
+
+  <!-- cnzz Analytics -->
+  
+
+
+
+  <script src="/blog/lib/prettify/prettify.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      $('pre').addClass('prettyprint  ');
+      prettyPrint();
+    })
+  </script>
+
+
+
+  <script src="/blog/lib/typed/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "设计模式系列笔记-代理模式&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script src="/blog/lib/anchor/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "false",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script src="/blog/js/local-search.js" ></script>
+  <script>
+    var path = "/blog/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      getSearchFile(path);
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script src="/blog/lib/fancybox/jquery.fancybox.min.js" ></script>
+  <script>
+    $("#post img:not(.no-zoom img, img[no-zoom])").each(
+      function () {
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "images");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

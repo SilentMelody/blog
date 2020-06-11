@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>关于Webpack</title>
+    <link href="/blog/2020/03/15/webpack-questions/"/>
+    <url>/blog/2020/03/15/webpack-questions/</url>
+    
+    <content type="html"><![CDATA[<p><strong>！！本文摘抄自 <a href="https://www.cnblogs.com/gaoht/p/11310365.html" target="_blank" rel="noopener">https://www.cnblogs.com/gaoht/p/11310365.html</a>，转载请注明原出处</strong></p><h2 id="一、目录"><a href="#一、目录" class="headerlink" title="一、目录"></a>一、目录</h2><ol><li>webpack与grunt、gulp的不同？</li><li>与webpack类似的工具还有哪些？谈谈你为什么最终选择（或放弃）使用webpack？</li><li>有哪些常见的Loader？他们是解决什么问题的？</li><li>有哪些常见的Plugin？他们是解决什么问题的？</li><li>Loader和Plugin的不同？</li><li>webpack的构建流程是什么?从读取配置到输出文件这个过程尽量说全</li><li>是否写过Loader和Plugin？描述一下编写loader或plugin的思路？</li><li>webpack的热更新是如何做到的？说明其原理？</li><li>如何利用webpack来优化前端性能？（提高性能和体验）</li><li>如何提高webpack的构建速度？</li><li>怎么配置单页应用？怎么配置多页应用？</li><li>npm打包时需要注意哪些？如何利用webpack来更好的构建？</li><li>如何在vue项目中实现按需加载？</li></ol><p>盒子模型从独立盒子结构以及多盒之间的关系两方面理解</p><h3 id="盒子模型概念"><a href="#盒子模型概念" class="headerlink" title="盒子模型概念"></a>盒子模型概念</h3><p>独立盒子模型由：内容、border、padding、margin 四部分组成</p><ul><li>标准盒模型（w3c标准）的实际宽高 = width / height (内容宽高) + padding + border + margin</li><li>怪异盒模型（IE标准）的 weight 和 height 包含了 padding 和 border<br>怪异盒模型的实际宽高 = width / height (内容宽高 + padding + border)  + margin</li></ul><p>可以通过属性box-sizing来设置盒子模型的解析模式</p><ul><li>content-box： 默认值，border和padding不算到width范围内，可以理解为是W3c的标准模型(default)</li><li>border-box：border和padding划归到width范围内，可以理解为是IE的怪异盒模型</li><li>padding-box：将padding算入width范围</li></ul><h3 id="盒子之间的关系"><a href="#盒子之间的关系" class="headerlink" title="盒子之间的关系"></a>盒子之间的关系</h3><p>有标准流模式、“浮动”属性、“定位”属性</p><h4 id="1-标准文档流-标准流"><a href="#1-标准文档流-标准流" class="headerlink" title="1. 标准文档流 / 标准流"></a>1. 标准文档流 / 标准流</h4><p>指不使用一些特殊的排列和定位的 css 样式</p><ol><li><p>块级元素<br>在父元素中会自动换行，且跟同级的兄弟元素按照出现的顺序依次垂直排列，宽度自动铺满父元素宽度<br>div、h1 -h6、 p 、pre 、hr、menu、noframes、noscript、dl、ul、ol 、fieldset、form、table</p></li><li><p>行内元素<br>在父元素中水平排列，直到父元素的最右端才自动换行<br>span, strong, em, br, img , input, label, select, textarea, cite, a，sub，sup<br><em>行内元素设置的width和height无效，设置margin和padding只有左右边距有效</em></p></li></ol><h4 id="2-盒子在标准流中的定位"><a href="#2-盒子在标准流中的定位" class="headerlink" title="2. 盒子在标准流中的定位"></a>2. 盒子在标准流中的定位</h4><p>用margin控制盒子与盒子之间的位置关系<br>（1）两个行内元素相邻时距离：左边的margin-right+右边的margin-left；<br>（2）不是行内元素，有换行效果的块级元素：上下间的距离是两者中的较大者，如上面的margin-bottom大于下面的margin-top，距离就取margin-bottom。<br>（3）当div嵌套时，子元素的margin将以父元素的内容区域为参考。<br>“标准流”中，块级元素没有设width和height时，默认宽度会自动延伸到父元素的内容区域为限，高度为包容下内容的最小高度。如果设置了width和height，就以值来显示。<br>（4）当margin为负数时。被设为负数的往相反方向移动，甚至会覆盖在其他元素上。当块级元素间形成嵌套的父子关系时，margin设为负数可以使子元素从父元素中分离出来</p><h4 id="3-盒子的浮动（float）"><a href="#3-盒子的浮动（float）" class="headerlink" title="3. 盒子的浮动（float）"></a>3. 盒子的浮动（float）</h4><p>  设置浮动后，盒子的宽高也会有改变。要清除浮动。也就是：（块级元素设置为浮动后，将脱离“标准流”，但还占据着父元素的空间，父元素的高度不再受浮动的子元素的影响，而由没浮动的其他子元素高度确定。）</p><h4 id="4-盒子的定位（position）"><a href="#4-盒子的定位（position）" class="headerlink" title="4. 盒子的定位（position）"></a>4. 盒子的定位（position）</h4><ul><li>static（静态定位）<br>表示元素在标准流中的默认位置，无任何效果，为默认值</li><li>relative（相对定位）<br>指定为relative后还要指定一定的偏移量，水平方向left、right，垂直方向top、bottom<br>偏移量是指与它原来所处的位置的移动距离<br>可以描述如下：<br>  1）.相对定位，是以元素恩深在“标准流”中或者浮动的原本的位置为基准，通过偏移达到新位置<br>  2）.仍在标准流中，对父元素和兄弟元素无任何影响，即使由于偏移移到了父元素外边，其他元素也还在原来位置，不会顶上来</li><li>absolute（绝对定位）<br>也需要指定偏移量<br>  1）.绝对定位，从标准流中脱离，他们对其后的兄弟元素无任何影响<br>  2）.使用绝对定位的元素，以它“最近”的一个“已经定位”的“祖先元素”为基准进行偏移，如果没有已经定位的祖先元素，则以浏览器窗口为基准进行偏移<br>  3）.所谓已经定位：指position有设置，且不是设置为static的任意一种方式</li><li>fixed（固定定位）<br>以浏览器窗口为根据</li></ul><h2 id="二、标准流-正常流"><a href="#二、标准流-正常流" class="headerlink" title="二、标准流 / 正常流"></a>二、标准流 / 正常流</h2><p>感性认识：简单且符合直觉，依次排列，排不下换行</p><h4 id="拓展规则"><a href="#拓展规则" class="headerlink" title="拓展规则"></a>拓展规则</h4><ul><li>float 规则：<br>使盒占用了正常流需要的空间，可以理解为“文字环绕”</li><li>vertital-align 规则：<br>规定如何在垂直方向对齐盒</li><li>margin 规则：<br>规定了元素自身周围所需要的空间</li></ul><h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><ul><li>格式化上下文<br>CSS 计算排版和布局的算法需要依赖一个排版的“当前状态”，这个当前状态称为“格式化上下文”</li><li>盒<br>块级盒（行级盒）：使用块级格式化上下文<br>行内级盒：使用行内级格式化上下文</li></ul><h4 id="排版基本规则"><a href="#排版基本规则" class="headerlink" title="排版基本规则"></a>排版基本规则</h4><p>当我们要把正常流中的盒或文字排版，需要分为三种情况</p><ul><li>当遇到块级盒：排入块级格式化上下文</li><li>当遇到行内级盒或文字：首先尝试排入行内级格式化上下文，如果排不下，那么创建一个行盒，先将行盒排版（行盒是块级，所以到第一种情况），行盒会创建一个行内级格式化上下文。</li><li>遇到 float 盒：把盒的顶部跟当前行内级上下文上边缘对齐，然后根据 float 的方向把盒的对应边缘对到块级格式化上下文的边缘，之后重排当前行盒。</li></ul><p>部分元素会在其内部创建新的块级格式化上下文：</p><ol><li>浮动定位</li><li>绝对定位元素</li><li>非块级但仍能包含块级元素的容器（如 inline-blocks, table-cells, table-captions）</li><li>块级的能包含块级元素的容器</li></ol>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>webpack</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>从浏览器多进程到JS单线程，JS运行机制梳理</title>
+    <link href="/blog/2020/02/18/browser-render/"/>
+    <url>/blog/2020/02/18/browser-render/</url>
+    
+    <content type="html"><![CDATA[<h3 id="大纲"><a href="#大纲" class="headerlink" title="大纲"></a>大纲</h3><ol><li>进程和线程</li><li>浏览器是多进程的<ul><li>浏览器都包含哪些进程</li><li>浏览器多进程的优势</li><li>浏览器内核（渲染进程）</li><li>Browser进程和浏览器内核（Renderer进程）的通信过程</li></ul></li><li>梳理浏览器内核中线程之间的关系<ul><li>GUI渲染线程与JS引擎线程互斥</li><li>JS阻塞页面加载</li><li>WebWorker，JS的多线程？</li><li>WebWorker与SharedWorker</li></ul></li><li>简单梳理下浏览器渲染流程<ul><li>load事件与DOMContentLoaded事件的先后</li><li>css加载是否会阻塞dom树渲染？</li><li>普通图层和复合图层</li></ul></li><li>从Event Loop谈JS的运行机制<ul><li>事件循环机制进一步补充</li><li>单独说说定时器</li><li>setTimeout而不是setInterval</li></ul></li><li>事件循环进阶：macrotask与microtask</li></ol><h3 id="进程和线程"><a href="#进程和线程" class="headerlink" title="进程和线程"></a>进程和线程</h3><pre><code>- 进程是一个工厂，工厂有它的独立资源- 工厂之间相互独立- 线程是工厂中的工人，多个工人协作完成任务- 工厂内有一个或多个工人- 工人之间共享空间</code></pre><p>再完善完善概念</p><pre><code>- 工厂的资源 -&gt; 系统分配的内存（独立的一块内存）- 工厂之间的相互独立 -&gt; 进程之间相互独立- 多个工人协作完成任务 -&gt; 多个线程在进程中协作完成任务- 工厂内有一个或多个工人 -&gt; 一个进程由一个或多个线程组成- 工人之间共享空间 -&gt; 同一进程下的各个线程之间共享程序的内存空间（包括代码段、数据集、堆等）</code></pre><p>用较为官方的术语描述一遍</p><ul><li>进程是cpu资源分配的最小单位（是能拥有资源和独立运行的最小单位）</li><li>线程是cpu调度的最小单位（线程是建立在进程的基础上的一次程序运行单位，一个进程中可以有多个线程）</li></ul><h3 id="浏览器是多进程的"><a href="#浏览器是多进程的" class="headerlink" title="浏览器是多进程的"></a>浏览器是多进程的</h3><ul><li>浏览器是多进程的</li><li>浏览器之所以能够运行，是因为系统给它的进程分配了资源（cpu、内存）</li><li>简单点理解，每打开一个Tab页，就相当于创建了一个独立的浏览器进程。（部分情况会有进程合并）</li></ul><h5 id="浏览器都包含哪些进程"><a href="#浏览器都包含哪些进程" class="headerlink" title="浏览器都包含哪些进程"></a>浏览器都包含哪些进程</h5><ol><li>Browser进程：浏览器的主进程（负责协调、主控），只有一个。作用有<ul><li>负责浏览器界面显示，与用户交互。如前进，后退等</li><li>负责各个页面的管理，创建和销毁其他进程</li><li>将Renderer进程得到的内存中的Bitmap，绘制到用户界面上</li><li>网络资源的管理，下载等</li></ul></li><li>第三方插件进程：每种类型的插件对应一个进程，仅当使用该插件时才创建</li><li>GPU进程：最多一个，用于3D绘制等</li><li>浏览器渲染进程（浏览器内核）（Renderer进程，内部是多线程的）：默认每个Tab页面一个进程，互不影响。主要作用为<ul><li>页面渲染，脚本执行，事件处理等</li></ul></li></ol><p>主进程绘制与渲染进程绘制的关系</p><ul><li>主进程负责资源的管理，资源也包括屏幕的绘制，render进程负责页面的实际排版，也就是通常说的页面解析<br>但render进程实际是离屏渲染，也就是它在内存里面栅格化生成点阵像素数据，并不会在屏幕上绘制</li><li>栅格化后，render进程通过IPC将刚才的像素数据的内存地址传给主进程，主进程通过共享内存的方式将它绘制到屏幕上</li><li>为什么要这样做？为了安全性，主进程是大管家，它才有权利决定要显示哪个页面，而render进程无论如何，都不能在tab没有激活的情况下在背后偷偷绘制屏幕</li></ul><h5 id="浏览器多进程的优势"><a href="#浏览器多进程的优势" class="headerlink" title="浏览器多进程的优势"></a>浏览器多进程的优势</h5><ul><li>避免单个page crash影响整个浏览器</li><li>避免第三方插件crash影响整个浏览器</li><li>多进程充分利用多核优势</li><li>方便使用沙盒模型隔离插件等进程，提高浏览器稳定性</li></ul><h5 id="重点是浏览器内核（渲染进程）"><a href="#重点是浏览器内核（渲染进程）" class="headerlink" title="重点是浏览器内核（渲染进程）"></a>重点是浏览器内核（渲染进程）</h5><p>页面的渲染，JS的执行，事件的循环，都在这个进程内进行<br>渲染进程包含的线程</p><ol><li>GUI渲染线程<ul><li>负责渲染浏览器界面，解析HTML，CSS，构建DOM树和RenderObject树，布局和绘制等</li><li>当界面需要重绘（Repaint）或由于某种操作引发回流(reflow)时，该线程就会执行</li><li>GUI渲染线程与JS引擎线程是互斥的，当JS引擎执行时GUI线程会被挂起（相当于被冻结了），GUI更新会被保存在一个队列中等到JS引擎空闲时立即被执行</li></ul></li><li>JS引擎线程<ul><li>也称为JS内核，负责处理Javascript脚本程序（例如V8引擎）</li><li>JS引擎线程负责解析Javascript脚本，运行代码</li><li>JS引擎一直等待着任务队列中任务的到来，然后加以处理，一个Tab页（renderer进程）中无论什么时候都只有一个JS线程在运行JS程序</li><li>GUI渲染线程与JS引擎线程是互斥的，所以如果JS执行的时间过长，这样就会造成页面的渲染不连贯，导致页面渲染加载阻塞</li></ul></li><li>事件触发线程<ul><li>归属于浏览器而不是JS引擎，用来控制事件循环（可以理解，JS引擎自己都忙不过来，需要浏览器另开线程协助）</li><li>当JS引擎执行代码块如setTimeOut时（也可来自浏览器内核的其他线程,如鼠标点击、AJAX异步请求等），会将对应任务添加到事件线程中</li><li>当对应的事件符合触发条件被触发时，该线程会把事件添加到待处理队列的队尾，等待JS引擎的处理</li><li>注意，由于JS的单线程关系，所以这些待处理队列中的事件都得排队等待JS引擎处理（当JS引擎空闲时才会去执行）</li></ul></li><li>定时触发器线程<ul><li>传说中的setInterval与setTimeout所在线程</li><li>浏览器定时计数器并不是由JavaScript引擎计数的,（因为JavaScript引擎是单线程的, 如果处于阻塞线程状态就会影响记计时的准确）</li><li>因此通过单独线程来计时并触发定时（计时完毕后，添加到事件队列中，等待JS引擎空闲后执行）</li><li>注意，W3C在HTML标准中规定，规定要求setTimeout中低于4ms的时间间隔算为4ms</li></ul></li><li>异步http请求线程<ul><li>在XMLHttpRequest在连接后是通过浏览器新开一个线程请求</li><li>将检测到状态变更时，如果设置有回调函数，异步线程就产生状态变更事件，将这个回调再放入事件队列中。再由JavaScript引擎执行</li></ul></li></ol><p><img src="http://www.cumulus.work/uploads/1591854716068.png" srcset="/blog/img/loading.gif" alt="image.png"></p><h5 id="Browser进程（控制进程）和浏览器内核（Renderer进程）的通信过程"><a href="#Browser进程（控制进程）和浏览器内核（Renderer进程）的通信过程" class="headerlink" title="Browser进程（控制进程）和浏览器内核（Renderer进程）的通信过程"></a>Browser进程（控制进程）和浏览器内核（Renderer进程）的通信过程</h5><p>简化过后的过程</p><ul><li>Browser进程收到用户请求，首先需要获取页面内容（譬如通过网络下载资源），随后将该任务通过RendererHost接口传递给Render进程</li><li>Renderer进程的Renderer接口收到消息，简单解释后，交给渲染线程，然后开始渲染<ul><li>渲染线程接收请求，加载网页并渲染网页，这其中可能需要Browser进程获取资源和需要GPU进程来帮助渲染</li><li>当然可能会有JS线程操作DOM（这样可能会造成回流并重绘）</li><li>最后Render进程将结果传递给Browser进程</li></ul></li><li>Browser进程接收到结果并将结果绘制出来</li></ul><p><img src="http://www.cumulus.work/uploads/1591854996255.png" srcset="/blog/img/loading.gif" alt="image"></p><h3 id="梳理浏览器内核中线程之间的关系"><a href="#梳理浏览器内核中线程之间的关系" class="headerlink" title="梳理浏览器内核中线程之间的关系"></a>梳理浏览器内核中线程之间的关系</h3><h5 id="GUI渲染线程与JS引擎线程互斥"><a href="#GUI渲染线程与JS引擎线程互斥" class="headerlink" title="GUI渲染线程与JS引擎线程互斥"></a>GUI渲染线程与JS引擎线程互斥</h5><p>由于JavaScript是可操纵DOM的，如果在修改这些元素属性同时渲染界面（即JS线程和UI线程同时运行），那么渲染线程前后获得的元素数据就可能不一致了<br>因此为了防止渲染出现不可预期的结果，浏览器设置GUI渲染线程与JS引擎为互斥的关系，当JS引擎执行时GUI线程会被挂起， GUI更新则会被保存在一个队列中等到JS引擎线程空闲时立即被执行</p><h5 id="JS阻塞页面加载"><a href="#JS阻塞页面加载" class="headerlink" title="JS阻塞页面加载"></a>JS阻塞页面加载</h5><p>从上述的互斥关系，可以推导出，JS如果执行时间过长就会阻塞页面<br>假设JS引擎正在进行巨量的计算，此时就算GUI有更新，也会被保存到队列中，等待JS引擎空闲后执行。 然后，由于巨量计算，所以JS引擎很可能很久很久后才能空闲，自然会感觉到巨卡无比</p><h5 id="WebWorker，JS的多线程"><a href="#WebWorker，JS的多线程" class="headerlink" title="WebWorker，JS的多线程"></a>WebWorker，JS的多线程</h5><pre><code>Web Worker为Web内容在后台线程中运行脚本提供了一种简单的方法。线程可以执行任务而不干扰用户界面一个worker是使用一个构造函数创建的一个对象(e.g. Worker()) 运行一个命名的JavaScript文件 这个文件包含将在工作线程中运行的代码; workers 运行在另一个全局上下文中,不同于当前的window因此，使用 window快捷方式获取当前全局的范围 (而不是self) 在一个 Worker 内将返回错误</code></pre><p>创建Worker时，JS引擎向浏览器申请开一个子线程（子线程是浏览器开的，完全受主线程控制，而且不能操作DOM）<br>JS引擎线程与worker线程间通过特定的方式通信（postMessage API，需要通过序列化对象来与线程交互特定的数据）</p><h5 id="WebWorker与SharedWorker"><a href="#WebWorker与SharedWorker" class="headerlink" title="WebWorker与SharedWorker"></a>WebWorker与SharedWorker</h5><ul><li>WebWorker只属于某个页面，不会和其他页面的Render进程（浏览器内核进程）共享，所以Chrome在Render进程中（每一个Tab页就是一个render进程）创建一个新的线程来运行Worker中的JavaScript程序</li><li>SharedWorker是浏览器所有页面共享的，不能采用与Worker同样的方式实现，因为它不隶属于某个Render进程，可以为多个Render进程共享使用，所以Chrome浏览器为SharedWorker单独创建一个进程来运行JavaScript程序，在浏览器中每个相同的JavaScript只存在一个SharedWorker进程，不管它被创建多少次</li></ul><p>本质上就是进程和线程的区别。SharedWorker由独立的进程管理，WebWorker只是属于render进程下的一个线程</p><h5 id="简单梳理下浏览器渲染流程"><a href="#简单梳理下浏览器渲染流程" class="headerlink" title="简单梳理下浏览器渲染流程"></a>简单梳理下浏览器渲染流程</h5><p>前期工作</p><pre><code>- 浏览器输入url，浏览器主进程接管，开一个下载线程- 然后进行 http请求（略去DNS查询，IP寻址等等操作），然后等待响应，获取内容，- 随后将内容通过RendererHost接口转交给Renderer进程- 浏览器渲染流程开始</code></pre><p>浏览器器内核拿到内容后，渲染大概可以划分成以下几个步骤</p><pre><code>- 解析html建立dom树- 解析css构建render树（将CSS代码解析成树形的数据结构，然后结合DOM合并成render树）- 布局render树（Layout/reflow），负责各元素尺寸、位置的计算- 绘制render树（paint），绘制页面像素信息- 浏览器会将各层的信息发送给GPU，GPU会将各层合成（composite），显示在屏幕上</code></pre><p><img src="http://www.cumulus.work/uploads/1591856383180.png" srcset="/blog/img/loading.gif" alt="image"></p><h5 id="load事件与DOMContentLoaded事件的先后"><a href="#load事件与DOMContentLoaded事件的先后" class="headerlink" title="load事件与DOMContentLoaded事件的先后"></a>load事件与DOMContentLoaded事件的先后</h5><ul><li>当 DOMContentLoaded 事件触发时，仅当DOM加载完成，不包括样式表，图片。 (譬如如果有async加载的脚本就不一定完成)</li><li>当 onload 事件触发时，页面上所有的DOM，样式表，脚本，图片都已经加载完成了。 （渲染完毕了）</li></ul><h5 id="css加载是否会阻塞dom树渲染"><a href="#css加载是否会阻塞dom树渲染" class="headerlink" title="css加载是否会阻塞dom树渲染"></a>css加载是否会阻塞dom树渲染</h5><ul><li>css是由单独的下载线程异步下载的</li><li>css加载不会阻塞DOM树解析（异步加载时DOM照常构建）</li><li>但会阻塞render树渲染（渲染时需等css加载完毕，因为render树需要css信息）</li></ul><h5 id="普通图层和复合图层"><a href="#普通图层和复合图层" class="headerlink" title="普通图层和复合图层"></a>普通图层和复合图层</h5><p>可以简单的这样理解，浏览器渲染的图层一般包含两大类：普通图层以及复合图层</p><ul><li>普通文档流内可以理解为一个复合图层（这里称为默认复合层，里面不管添加多少元素，其实都是在同一个复合图层中）</li><li>absolute布局（fixed也一样），虽然可以脱离普通文档流，但它仍然属于默认复合层</li><li>可以通过硬件加速的方式，声明一个新的复合图层，它会单独分配资源 （当然也会脱离普通文档流，这样一来，不管这个复合图层中怎么变化，也不会影响默认复合层里的回流重绘）</li></ul><p>可以简单理解下：GPU中，各个复合图层是单独绘制的，所以互不影响，这也是为什么某些场景硬件加速效果一级棒</p><p>如何变成复合图层（硬件加速）</p><ul><li>最常用的方式：transform</li><li>opacity属性/过渡动画（需要动画执行的过程中才会创建合成层，动画没有开始或结束后元素还会回到之前的状态）</li><li><video><iframe><canvas><webgl>等元素</li></ul><p>absolute和硬件加速的区别</p><ul><li>absolute虽然可以脱离普通文档流，但是无法脱离默认复合层。 所以，就算absolute中信息改变时不会改变普通文档流中render树， 但是，浏览器最终绘制时，是整个复合层绘制的，所以absolute中信息的改变，仍然会影响整个复合层的绘制</li><li>而硬件加速直接就是在另一个复合层了（另起炉灶），所以它的信息改变不会影响默认复合层 （当然了，内部肯定会影响属于自己的复合层），仅仅是引发最后的合成（输出视图）</li></ul><p>复合图层的作用</p><ul><li>一般一个元素开启硬件加速后会变成复合图层，可以独立于普通文档流中，改动后可以避免整个页面重绘，提升性能</li></ul><p>硬件加速时请使用z-index</p><ul><li>简单点理解，其实可以认为是一个隐式合成的概念：如果a是一个复合图层，而且b在a上面，那么b也会被隐式转为一个复合图层，这点需要特别注意</li><li>大量使用复合图层，否则由于资源消耗过度，页面反而会变的更卡</li></ul><h3 id="从Event-Loop谈JS的运行机制"><a href="#从Event-Loop谈JS的运行机制" class="headerlink" title="从Event Loop谈JS的运行机制"></a>从Event Loop谈JS的运行机制</h3><p>事件循环略</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>JavaScript</tag>
+      
+      <tag>浏览器</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>设计模式系列笔记-代理模式</title>
+    <link href="/blog/2019/09/17/design-model-proxy/"/>
+    <url>/blog/2019/09/17/design-model-proxy/</url>
+    
+    <content type="html"><![CDATA[<p><em>写在前面：本系列文章内容为《JavaScript设计模式与开发实践》一书学习笔记，感谢作者曾探</em></p><h2 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a>代理模式</h2><p>代理模式是为一个对象提供一个代用品或占位符，以便控制对它的访问</p><p>代理模式的关键是，当客户不方便直接访问一个对象或者不满足需要的时候，提供一个替身对象来控制对这个对象的访问，客户实际上访问的是替身对象。替身对象对请求做出一些处理之后，再把请求转交给本体对象</p><p>例如 A 访问 B<br>非代理模式：A —&gt; B<br>用代理模式：A —&gt; C —&gt; B</p><h3 id="1-代理模式实现"><a href="#1-代理模式实现" class="headerlink" title="1.代理模式实现"></a>1.代理模式实现</h3><p>举例：小明追求 A，B 为两人共同好友，小明让 B 帮他向 A 送花</p><pre><code>var Flower = function() {};var xiaoming = {  sendFlower: function(target) {    var flower = new Flower();    target.receiveFlower(flower);  }};var B = {  receiveFlower: function(flower) {    A.receiveFlower(flower);  }};var A = {  receiveFlower: function(flower) {    console.log(&#39;收到花 &#39; + flower);  }};xiaoming.sendFlower(B);</code></pre><p>可以发现此处的代理没有任何作用，这时候我们添加设定，小明希望在 A 心情好的时候送花表白，但是不了解 A 的心情变化，所以让比较了解 A 的 B 帮忙送花</p><pre><code>// 心情好的时候再送花var Flower = function() {};var xiaoming = {  sendFlower: function(target) {    var flower = new Flower();    target.receiveFlower(flower);  }};var B = {  receiveFlower: function(flower) {    A.listenGoodMood(function() { // 监听 A 的好心情      A.receiveFlower(flower);    });  }};var A = {  receiveFlower: function(flower) {    console.log(&#39;收到花 &#39; + flower);  },  listenGoodMood: function(fn) {    setTimeout(function() { // 假设 10 秒之后 A 的心情变好      fn();    }, 10000);  }};xiaoming.sendFlower(B);</code></pre><h3 id="2-保护代理和虚拟代理"><a href="#2-保护代理和虚拟代理" class="headerlink" title="2.保护代理和虚拟代理"></a>2.保护代理和虚拟代理</h3><p>保护代理：代理 B 可以帮助 A 过滤掉一些请求，一些请求就可以直接在代理 B处被拒绝掉。这种代理叫作保护代理<br>虚拟代理：虚拟代理把一些开销很大的对象，延迟到真正需要它的时候才去创建，以送花举例，使用虚拟代理可以将买花这一操作放到需要的时候再进行，防止过早的买花，等 A 心情好的时候已经不新鲜了</p><pre><code>var B = {  receiveFlower: function(flower) {    A.listenGoodMood(function() { // 监听 A 的好心情      var flower = new Flower(); // 延迟创建 flower 对象      A.receiveFlower(flower);    });  }};</code></pre><p>护代理用于控制不同权限的对象对目标对象的访问，但在 JavaScript 并不容易实现保护代理，因为我们无法判断谁访问了某个对象。而虚拟代理是最常用的一种代理模式</p><h3 id="3-虚拟代理实现图片预加载"><a href="#3-虚拟代理实现图片预加载" class="headerlink" title="3.虚拟代理实现图片预加载"></a>3.虚拟代理实现图片预加载</h3><p>引入代理对象 proxyImage，在图片被真正加载好之前，页面中出现 loading 的 gif 动画, 来提示用户图片正在加载</p><pre><code>var myImage = (function() {  var imgNode = document.createElement(&#39;img&#39;);  document.body.appendChild(imgNode);  return {    setSrc: function(src) {      imgNode.src = src;    }  }})();var proxyImage = (function() {  var img = new Image;  img.onload = function() {    myImage.setSrc(this.src);  }  return {    setSrc: function(src) {      myImage.setSrc(&#39;/loading.gif&#39;);      img.src = src;    }  }})();proxyImage.setSrc(&#39;http://xxxx.jpg&#39;);</code></pre><p>上面这个程序，我们并没有改变或者增加 MyImage 的接口，但是通过代理对象，实际上给系统添加了新的行为，符合开放—封闭原则的<br>给 img 节点设置 src 和图片预加载这两个功能，被隔离在两个对象里，它们可以各自变化而不影响对方</p><h3 id="4-代理和本体接口的一致性"><a href="#4-代理和本体接口的一致性" class="headerlink" title="4.代理和本体接口的一致性"></a>4.代理和本体接口的一致性</h3><p>在客户看来，代理对象和本体是一致的， 代理接手请求的过程对于用户来说是透明的，用户并不清楚代理和本体的区别<br>作用：</p><ul><li>用户可以放心地请求代理，他只关心是否能得到想要的结果</li><li>在任何使用本体的地方都可以替换成使用代理</li></ul><p>如果代理对象和本体对象都为一个函数（函数也是对象），函数必然都能被执行，则可以认为它们也具有一致的“接口”<br>例如：</p><pre><code>var myImage = (function() {  var imgNode = document.createElement(&#39;img&#39;);  document.body.appendChild(imgNode);  return function(src) {    imgNode.src = src;  }})();var proxyImage = (function() {  var img = new Image;  img.onload = function() {    myImage(this.src);  }  return function(src) {    myImage(&#39;/loading.gif&#39;);    img.src = src;  }})();proxyImage(&#39;http://xxx.jpg&#39;);</code></pre><h3 id="5-代理模式其他应用"><a href="#5-代理模式其他应用" class="headerlink" title="5.代理模式其他应用"></a>5.代理模式其他应用</h3><h5 id="1-虚拟代理合并HTTP请求"><a href="#1-虚拟代理合并HTTP请求" class="headerlink" title="1. 虚拟代理合并HTTP请求"></a>1. 虚拟代理合并HTTP请求</h5><p>可以通过一个代理函数来收集一段时间之内的请求， 最后一次性发送给服务器</p><h5 id="2-缓存代理"><a href="#2-缓存代理" class="headerlink" title="2. 缓存代理"></a>2. 缓存代理</h5><p>编写一个简单的求乘积的程序</p><pre><code>var mult = function(){  console.log( &#39;开始计算乘积&#39; );  var a = 1;  for ( var i = 0, l = arguments.length; i &lt; l; i++ ){    a = a * arguments[i];  }  return a;};mult( 2, 3 ); // 输出：6mult( 2, 3, 4 ); // 输出：24 </code></pre><p>现在加入缓存代理函数：</p><pre><code>var proxyMult = (function(){  var cache = {};  return function(){    var args = Array.prototype.join.call( arguments, &#39;,&#39; );    if ( args in cache ){      return cache[ args ];    }    return cache[ args ] = mult.apply( this, arguments );  }})();proxyMult( 1, 2, 3, 4 ); // 输出：24proxyMult( 1, 2, 3, 4 ); // 输出：24 </code></pre><p>当我们第二次调用 proxyMult( 1, 2, 3, 4 )的时候，本体 mult 函数并没有被计算，proxyMult直接返回了之前缓存好的计算结果<br>通过增加缓存代理的方式，mult 函数可以继续专注于自身的职责——计算乘积，缓存的功能是由代理对象实现的</p><h5 id="3-用高阶函数动态创建代理"><a href="#3-用高阶函数动态创建代理" class="headerlink" title="3.用高阶函数动态创建代理"></a>3.用高阶函数动态创建代理</h5><p>通过传入高阶函数这种更加灵活的方式，可以为各种计算方法创建缓存代理</p><pre><code>/**************** 计算乘积 *****************/var mult = function(){  var a = 1;  for ( var i = 0, l = arguments.length; i &lt; l; i++ ){    a = a * arguments[i];  }  return a;};/**************** 计算加和 *****************/var plus = function(){  var a = 0;  for ( var i = 0, l = arguments.length; i &lt; l; i++ ){    a = a + arguments[i];  }  return a;};/**************** 创建缓存代理的工厂 *****************/var createProxyFactory = function( fn ){  var cache = {};  return function(){    var args = Array.prototype.join.call( arguments, &#39;,&#39; );    if ( args in cache ){      return cache[ args ];    }    return cache[ args ] = fn.apply( this, arguments );  }};var proxyMult = createProxyFactory( mult ),  proxyPlus = createProxyFactory( plus );alert ( proxyMult( 1, 2, 3, 4 ) ); // 输出：24alert ( proxyMult( 1, 2, 3, 4 ) ); // 输出：24alert ( proxyPlus( 1, 2, 3, 4 ) ); // 输出：10alert ( proxyPlus( 1, 2, 3, 4 ) ); // 输出：10 </code></pre><p>这些计算方法被当作参数传入一个专门用于创建缓存代理的工厂中， 这样一来，我们就可以为乘法、加法、减法等创建缓存代理</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>JavaScript</tag>
+      
+      <tag>JS</tag>
+      
+      <tag>设计模式</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>设计模式系列笔记-策略模式</title>
+    <link href="/blog/2019/09/14/design-model-strategy/"/>
+    <url>/blog/2019/09/14/design-model-strategy/</url>
+    
+    <content type="html"><![CDATA[<p><em>写在前面：本系列文章内容为《JavaScript设计模式与开发实践》一书学习笔记，感谢作者曾探</em></p><h2 id="策略模式"><a href="#策略模式" class="headerlink" title="策略模式"></a>策略模式</h2><p>在现实中，很多时候可以选择多种途径到达同一个目的地，程序设计中，要实现某一个功能有多种方案可以选择，可以根据具体情况选择其中一种方案，这就是策略模式<br>定义：策略模式就是定义一系列的算法，把它们一个个封装起来，并且使它们可以相互替换</p><h3 id="1-策略模式实现"><a href="#1-策略模式实现" class="headerlink" title="1.策略模式实现"></a>1.策略模式实现</h3><p>举例：年终奖的计算（绩效为 S 的人年<br>终奖有 4 倍工资，绩效为 A 的人年终奖有 3 倍工资，而绩效为 B 的人年终奖是 2 倍工资）<br>一般最容易想到的办法就是使用组合函数，代码如下：</p><pre><code>const performanceS = (salary) =&gt; {  return salary * 4;};const performanceA = (salary) =&gt; {  return salary * 3;};const performanceB = (salary) =&gt; {  return salary * 2;};const calculateBonus = (performanceLevel, salary) =&gt; {  if (performanceLevel === &#39;S&#39;) {    return performanceS(salary);  }  if (performanceLevel === &#39;A&#39;) {    return performanceA(salary);  }  if (performanceLevel === &#39;B&#39;) {    return performanceB(salary);  }};calculateBonus(&#39;A&#39;, 10000); // 输出：30000</code></pre><p>缺陷：<br>calculateBonus 函数有可能越来越庞大，而且在系统变化的时候缺乏弹性</p><h3 id="2-JavaScript-的策略模式实现"><a href="#2-JavaScript-的策略模式实现" class="headerlink" title="2.JavaScript 的策略模式实现"></a>2.JavaScript 的策略模式实现</h3><pre><code>// 策略模式const strategies = {  &quot;S&quot;: (salary) =&gt; {    return salary * 4;  },  &quot;A&quot;: (salary) =&gt; {    return salary * 3;  },  &quot;B&quot;: (salary) =&gt; {    return salary * 2;  }};const calculateBonus = (level, salary) =&gt; {  return strategies[level](salary);};console.log(calculateBonus(&#39;S&#39;, 20000)); // 输出：80000console.log(calculateBonus(&#39;A&#39;, 10000)); // 输出：30000</code></pre><h3 id="3-策略模式实现表单校验"><a href="#3-策略模式实现表单校验" class="headerlink" title="3.策略模式实现表单校验"></a>3.策略模式实现表单校验</h3><p>假设我们正在编写一个注册的页面，在点击注册按钮之前，有如下几条校验逻辑</p><ul><li>用户名不能为空</li><li>密码长度不能少于 6 位</li><li>手机号码必须符合格式</li></ul><p>HTML部分</p><pre><code>&lt;form action=&quot;http:// xxx.com/register&quot; id=&quot;registerForm&quot; method=&quot;post&quot;&gt;  请输入用户名：&lt;input type=&quot;text&quot; name=&quot;userName&quot;/&gt;  请输入密码：&lt;input type=&quot;text&quot; name=&quot;password&quot;/&gt;  请输入手机号码：&lt;input type=&quot;text&quot; name=&quot;phoneNumber&quot;/&gt;  &lt;button&gt;提交&lt;/button&gt;&lt;/form&gt;</code></pre><p>1.我们先把校验逻辑都封装成策略对象</p><pre><code>var strategies = {  isNonEmpty: function(value, errorMsg) { // 不为空    if (value === &#39;&#39;) {      return errorMsg;    }  },  minLength: function(value, length, errorMsg) { // 限制最小长度    if (value.length &lt; length) {      return errorMsg;    }  },  isMobile: function(value, errorMsg) { // 手机号码格式    if (!/(^1[3|5|8][0-9]{9}$)/.test(value)) {      return errorMsg;    }  }};</code></pre><p>2.接下来我们期望的使用方法</p><pre><code>var validataFunc = function() {  var validator = new Validator(); // 创建一个 validator 对象  /***************添加一些校验规则****************/  validator.add(registerForm.userName, &#39;isNonEmpty&#39;, &#39;用户名不能为空&#39;);  validator.add(registerForm.password, &#39;minLength:6&#39;, &#39;密码长度不能少于 6 位&#39;);  validator.add(registerForm.phoneNumber, &#39;isMobile&#39;, &#39;手机号码格式不正确&#39;);  var errorMsg = validator.start(); // 获得校验结果  return errorMsg; // 返回校验结果}var registerForm = document.getElementById(&#39;registerForm&#39;);registerForm.onsubmit = function() {  var errorMsg = validataFunc(); // 如果 errorMsg 有确切的返回值，说明未通过校验  if (errorMsg) {    alert(errorMsg);    return false; // 阻止表单提交  }};</code></pre><p>3.实现我们需要的 Validator 类</p><pre><code>var Validator = function() {  this.cache = []; // 保存校验规则};Validator.prototype.add = function(dom, rule, errorMsg) {  var ary = rule.split(&#39;:&#39;); // 把 strategy 和参数分开  this.cache.push(function() { // 把校验的步骤用空函数包装起来，并且放入 cache    var strategy = ary.shift(); // 用户挑选的 strategy    ary.unshift(dom.value); // 把 input 的 value 添加进参数列表    ary.push(errorMsg); // 把 errorMsg 添加进参数列表    return strategies[strategy].apply(dom, ary);  });};Validator.prototype.start = function() {  for (var i = 0, validatorFunc; validatorFunc = this.cache[i++];) {    var msg = validatorFunc(); // 开始校验，并取得校验后的返回信息    if (msg) { // 如果有确切的返回值，说明校验没有通过      return msg;    }  }};</code></pre><p>使用策略模式重构代码之后，我们仅仅通过“配置”的方式就可以完成一个表单的校验，这些校验规则也可以复用在程序的任何地方，还能作为插件的形式，方便地被移植到其他项目中</p><h3 id="4-策略模式优缺点"><a href="#4-策略模式优缺点" class="headerlink" title="4.策略模式优缺点"></a>4.策略模式优缺点</h3><p>优点：</p><ul><li>策略模式利用组合、委托和多态等技术和思想，可以有效地避免多重条件选择语句</li><li>策略模式提供了对开放—封闭原则的完美支持，易于切换，易于理解，易于扩展</li></ul><p>缺点：</p><ul><li>会在程序中增加许多策略类或者策略对象</li><li>要使用策略模式，必须了解所有的 strategy，必须了解各个 strategy 之间的不同点，这样才能选择一个合适的 strategy，一定程度上违背了最少知识原则</li></ul><h3 id="5-一等函数对象与策略模式"><a href="#5-一等函数对象与策略模式" class="headerlink" title="5.一等函数对象与策略模式"></a>5.一等函数对象与策略模式</h3><p><strong>在函数作为一等对象的语言中，策略模式是隐形的</strong><br>在 JavaScript 中，除了使用类来封装算法和行为之外，使用函数当然也是一种选择。这些“算法”可以被封装到函数中并且四处传递，也就是我们常说的”高阶函数”</p><p>在 JavaScript 这种将函数作为一等对象的语言里，策略模式已经融入到了语言本身当中，我们经常用高阶函数来封装不同的行为，并且把它传递到另一个函数中，例如：</p><pre><code>var S = function(salary) {  return salary * 4;};var A = function(salary) {  return salary * 3;};var B = function(salary) {  return salary * 2;};var calculateBonus = function(func, salary) {  return func(salary);};calculateBonus(S, 10000); // 输出：40000</code></pre><p>在 JavaScript 语言的策略模式中，策略类往往被函数所代替，这时策略模式就成为一种“隐形”的模式</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>JavaScript</tag>
+      
+      <tag>JS</tag>
+      
+      <tag>设计模式</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>设计模式系列笔记-单例模式</title>
+    <link href="/blog/2019/09/12/design-model-single/"/>
+    <url>/blog/2019/09/12/design-model-single/</url>
+    
+    <content type="html"><![CDATA[<p><em>写在前面：本系列文章内容为《JavaScript设计模式与开发实践》一书学习笔记，感谢作者曾探</em></p><h2 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h2><p>定义：保证一个类仅有一个实例，并可以全局访问该实例<br>举例：线程池、全局缓存、window对象等，或者全局的弹框组件、登录组件等</p><h3 id="1-实现单例模式"><a href="#1-实现单例模式" class="headerlink" title="1.实现单例模式"></a>1.实现单例模式</h3><p>思路：用一个变量来标志当前是否已经为某个类创建过对象，如果是，则在下一次获取该类的实例时，直接返回之前创建的对象<br>示例：</p><pre><code>const Singleton = function(name) {  this.name = name;  this.instance = null;};Singleton.prototype.getName = function() {  alert(this.name);};Singleton.getInstance = function(name) {  if (!this.instance) {    this.instance = new Singleton(name);  }  return this.instance;};const a = Singleton.getInstance(&#39;sven1&#39;);const b = Singleton.getInstance(&#39;sven2&#39;);alert(a === b); // true</code></pre><h3 id="2-透明的单例模式"><a href="#2-透明的单例模式" class="headerlink" title="2.透明的单例模式"></a>2.透明的单例模式</h3><p>透明的单例模式: 用户从这个单例类中创建对象的时候，可以像使用其他任何普通类一样</p><pre><code>// 透明的单例模式const CreateDiv = (function() {  let instance;  const CreateDiv = function(html) {    if (instance) {      return instance;    }    this.html = html;    this.init();    return instance = this;  };  CreateDiv.prototype.init = function() {    const div = document.createElement(&#39;div&#39;);    div.innerHTML = this.html;    document.body.appendChild(div);  };  return CreateDiv;})();const a = new CreateDiv(&#39;sven1&#39;);const b = new CreateDiv(&#39;sven2&#39;);alert(a === b); // true</code></pre><p>但是这种写法也有缺点：CreateDiv 的构造函数实际上负责了两件事情。第一是创建对象和执行初始化init 方法，第二是保证只有一个对象，这种多重职责使这个构造函数看起来很奇怪</p><h3 id="3-用代理实现单例模式"><a href="#3-用代理实现单例模式" class="headerlink" title="3.用代理实现单例模式"></a>3.用代理实现单例模式</h3><p>通过引入代理的方式，我们改造上面的例子，跟之前不同的是，现在我们把负责管理单例的逻辑移到了代理类proxySingletonCreateDiv 中。这样一来，CreateDiv 就变成了一个普通的类，它跟proxySingletonCreateDiv 组合起来可以达到单例模式的效果。</p><pre><code>// 代理实现单例模式class CreateDiv {  constructor(html) {    this.html = html;    this.init();  }};CreateDiv.prototype.init = function() {  const div = document.createElement(&#39;div&#39;);  div.innerHTML = this.html;  document.body.appendChild(div);};// 引入代理方法proxySingletonCreateDiv：const ProxySingletonCreateDiv = (function() {  let instance;  return (html) =&gt; {    if (!instance) {      instance = new CreateDiv(html);    }    return instance;  }})();const a = ProxySingletonCreateDiv(&#39;sven1&#39;);const b = ProxySingletonCreateDiv(&#39;sven2&#39;);alert(a === b);</code></pre><h3 id="4-惰性单例"><a href="#4-惰性单例" class="headerlink" title="4.惰性单例"></a>4.惰性单例</h3><p>惰性单例指的是在需要的时候才创建对象实例<br>以网页QQ的登录框举例</p><pre><code>// 惰性单例var createLoginLayer = (function() {  var div;  return function() {    if (!div) {      div = document.createElement(&#39;div&#39;);      div.innerHTML = &#39;我是登录浮窗&#39;;      div.style.display = &#39;none&#39;;      document.body.appendChild(div);    }    return div;  }})();document.getElementById(&#39;loginBtn&#39;).onclick = function() {  var loginLayer = createLoginLayer();  loginLayer.style.display = &#39;block&#39;;};</code></pre><p>这种方案存在的问题：</p><ul><li>这段代码仍然是违反单一职责原则的，创建对象和管理单例的逻辑都放在 createLoginLayer对象内部</li><li>如果我们下次需要创建页面中唯一的 iframe，或者 script 标签，用来跨域请求数据，就必须得如法炮制，把 createLoginLayer 函数几乎照抄一遍</li></ul><h3 id="5-通用的惰性单例"><a href="#5-通用的惰性单例" class="headerlink" title="5.通用的惰性单例"></a>5.通用的惰性单例</h3><p>管理单例的逻辑其实是完全可以抽象出来的，这个逻辑始终是一样的：用一个变量来标志是否创建过对象，如果是，则在下次直接返回这个已经创建好的对象<br>现在我们就把如何管理单例的逻辑从原来的代码中抽离出来，这些逻辑被封装在 getSingle<br>函数内部，创建对象的方法 fn 被当成参数动态传入 getSingle 函数</p><pre><code>var getSingle = function(fn) {  var result;  return function() {    return result || (result = fn.apply(this, arguments));  }};</code></pre><p>接下来将用于创建登录浮窗的方法用参数 fn 的形式传入 getSingle，我们不仅可以传入createLoginLayer，还能传入 createScript、createIframe、createXhr 等。之后再让 getSingle 返回一个新的函数，并且用一个变量 result 来保存 fn 的计算结果。result 变量因为身在闭包中，它永远不会被销毁。在将来的请求中，如果 result 已经被赋值，那么它将返回这个值。代码如下：</p><pre><code>var createLoginLayer = function() {  var div = document.createElement(&#39;div&#39;);  div.innerHTML = &#39;我是登录浮窗&#39;;  div.style.display = &#39;none&#39;;  document.body.appendChild(div);  return div;};var createSingleLoginLayer = getSingle(createLoginLayer);document.getElementById(&#39;loginBtn&#39;).onclick = function() {  var loginLayer = createSingleLoginLayer();  loginLayer.style.display = &#39;block&#39;;};</code></pre><p>我们再试试创建唯一的 iframe 用于动态加载第三方页面：</p><pre><code>var createSingleIframe = getSingle(function() {  var iframe = document.createElement(&#39;iframe&#39;);  document.body.appendChild(iframe);  return iframe;});document.getElementById(&#39;loginBtn&#39;).onclick = function() {  var loginLayer = createSingleIframe();  loginLayer.src = &#39;http://baidu.com&#39;;};</code></pre><p>在这个例子中，我们把创建实例对象的职责和管理单例的职责分别放置在两个方法里，这两个方法可以独立变化而互不影响，当它们连接在一起的时候，就完成了创建唯一实例对象的功能</p><h3 id="6-小节"><a href="#6-小节" class="headerlink" title="6.小节"></a>6.小节</h3><p>在 getSinge 函数中，实际上也提到了闭包和高阶函数的概念。单例模式是一种简单但非常实用的模式，特别是惰性单例技术，在合适的时候才创建对象，并且只创建唯一的一个，使用了代理模式和单一职责原则，创建对象和管理单例的职责被分布在两个不同的方法中</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>JavaScript</tag>
+      
+      <tag>JS</tag>
+      
+      <tag>设计模式</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>线上问题排查流程</title>
+    <link href="/blog/2019/04/25/bugfix/"/>
+    <url>/blog/2019/04/25/bugfix/</url>
+    
+    <content type="html"><![CDATA[<h3 id="线上问题排查流程"><a href="#线上问题排查流程" class="headerlink" title="线上问题排查流程"></a>线上问题排查流程</h3><p>线上问题的跟进，修复，排期，由测试录入Wone，记录为线上bug。然后指给产品，由产品进行排期修复(注意：如果是紧急问题，则立即修复)。<br>刚刚发布或切流量之后线上出现大面积反馈的，一般和发布有关，如果不具备条件重现，需要第一时间同步给相关的同事和 leader，并做好回滚准备。日常的线上问题，可以按照以下流程排查问题。</p><h4 id="Step1-信息收集"><a href="#Step1-信息收集" class="headerlink" title="Step1 信息收集"></a>Step1 信息收集</h4><p>要求客服联系用户提供以下信息：</p><ul><li>uid</li><li>机型</li><li>系统版本</li><li>App 版本</li><li>现场截图</li><li>网络情况</li><li>尽可能多的现象描述</li></ul><h4 id="Step2-用户引导"><a href="#Step2-用户引导" class="headerlink" title="Step2 用户引导"></a>Step2 用户引导</h4><p>如果用户比较着急，引导用户做其他操作：</p><ul><li>杀进程重试</li><li>切网络重试</li><li>重新登录</li><li>使用微信公众号、使用 web 渠道</li></ul><h4 id="Step3-处理问题"><a href="#Step3-处理问题" class="headerlink" title="Step3 处理问题"></a>Step3 处理问题</h4><h5 id="1-复现"><a href="#1-复现" class="headerlink" title="1.复现"></a>1.复现</h5><ul><li>找相同设备复现<br>当你不能独自完成这一步时，可以寻求支持 —— 寻求团队和测试团队共同复现<h5 id="2-基本判断"><a href="#2-基本判断" class="headerlink" title="2.基本判断"></a>2.基本判断</h5></li><li>点击按钮无反应：兼容性问题 80%</li><li>点击按钮有请求发出 (网络菊花) 或弹出了异常：服务问题 80%</li><li>页面白屏：兼容性/服务 50%</li><li>原生 webview 打开 ok，planck 打开有问题：和客户端一起排查，如判断大概率服务端问题，立即寻求服务端一起排查<h5 id="3-快速区分问题"><a href="#3-快速区分问题" class="headerlink" title="3.快速区分问题"></a>3.快速区分问题</h5>判断问题发生的前端系统<br>可根据 quip文档|理财项目信息汇总 初步判断主流程所在工程：</li><li>利用日志<br>根据问题所在的项目，如果是 Node 项目，可根据日志快速区分是兼容性问题、Node 或是 java 接口问题</li><li>利用埋点<br>如果有埋点，到查看用户埋点链路，分析用户卡在哪一步</li><li>接口复现<br>从 Node 和 Java 日志里捞用户的请求和响应数据，在工程里 mock 数据，看能否复现</li></ul><h5 id="4-精确排查问题"><a href="#4-精确排查问题" class="headerlink" title="4.精确排查问题"></a>4.精确排查问题</h5><p>如果客户的问题已经解决，线上问题已经修复，但问题原因尚未查明，需要做精确排查</p><ul><li>代码 review</li><li>是否有 bi 埋点干扰</li><li>是否有明显异常边界未处理</li><li>是否有分支情况未处理</li><li>Chrome、原生 webview 和客户端分别打开，区分是否是 兼容性或 webview-bridge 的问题</li><li>线上资源文件本地代理，charles</li><li>客户端协助调试</li><li>客户端可以协助 Inspect 到 App 中的 WebView，使得前端可以在 Chrome 的控制台中调试问题。</li><li>客户端可以协助定位前端无法界定边界的问题，例如点击按钮后无请求发出，可以寻求客户端断点 native 代码</li><li>依托埋点和临时发布</li><li>在页面中埋神策点，发布上线，定位用户 js 卡在哪一步</li><li>将疑似异常的地方加 try catch 并将 error 上报</li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>代码质量</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>前端项目review</title>
+    <link href="/blog/2019/04/15/front-review/"/>
+    <url>/blog/2019/04/15/front-review/</url>
+    
+    <content type="html"><![CDATA[<h3 id="前端项目-review"><a href="#前端项目-review" class="headerlink" title="前端项目 review"></a>前端项目 review</h3><p>主要分两步：</p><ul><li>整体梳理</li><li>详细 code review </li></ul><h4 id="整体梳理"><a href="#整体梳理" class="headerlink" title="整体梳理"></a>整体梳理</h4><p>对业务流程、边界、项目组织做现状整理，找出问题并产出改造方案</p><h5 id="1-组织形式"><a href="#1-组织形式" class="headerlink" title="1.组织形式"></a>1.组织形式</h5><ul><li>根据业务划分，指派业务模块owner</li><li>每周一、三晚上6点半，争取一小时内解决</li></ul><h5 id="2-Review-内容"><a href="#2-Review-内容" class="headerlink" title="2.Review 内容"></a>2.Review 内容</h5><ul><li>业务流程</li><li>应用及业务边界</li><li>输入输出</li><li>项目组织（同一个需求分散在不同的项目）</li></ul><h5 id="3-Review-结果"><a href="#3-Review-结果" class="headerlink" title="3.Review 结果"></a>3.Review 结果</h5><ul><li>业务流程图，由架构师和负责人将业务流程串联合并，并标出核心关键点，容易忽略的点</li><li>项目组织结构图，由架构师和负责人指出不合理的地方及改进意见</li><li>边界及输入输出文档</li></ul><h5 id="4-Review-目标"><a href="#4-Review-目标" class="headerlink" title="4.Review 目标"></a>4.Review 目标</h5><ul><li>清理疏通，扫除雷区</li><li>文档留存，有据可考</li><li>共同完善，及时更新</li></ul><h4 id="code-review"><a href="#code-review" class="headerlink" title="code review"></a>code review</h4><h5 id="1-组织形式-1"><a href="#1-组织形式-1" class="headerlink" title="1.组织形式"></a>1.组织形式</h5><ul><li>以业务（项目）为单位</li><li>每 1 周 2 次，1~2人，控制在一小时</li><li>业务交叉</li></ul><h5 id="2-Review-内容-1"><a href="#2-Review-内容-1" class="headerlink" title="2.Review 内容"></a>2.Review 内容</h5><ul><li>背景、功能</li><li>系统设计、功能模块、目录设计等</li><li>代码实现</li><li>代码风格</li><li>代码逻辑</li><li>注释</li><li>错误处理</li><li>UT（单元测试）</li></ul><h5 id="3-Review-结果-1"><a href="#3-Review-结果-1" class="headerlink" title="3.Review 结果"></a>3.Review 结果</h5><ul><li>结果文档 Good &amp; Bad point</li><li>改进 issue/owner/时间点</li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>代码质量</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>理解ES6中的Class（摘抄）</title>
+    <link href="/blog/2019/04/02/es6_class/"/>
+    <url>/blog/2019/04/02/es6_class/</url>
+    
+    <content type="html"><![CDATA[<p><strong>！！本文摘抄自 <a href="https://www.jianshu.com/p/86267fab4878" target="_blank" rel="noopener">https://www.jianshu.com/p/86267fab4878</a>，转载请注明原出处</strong></p><h3 id="传统方法实现类"><a href="#传统方法实现类" class="headerlink" title="传统方法实现类"></a>传统方法实现类</h3><p>传统的javascript中只有对象，没有类的概念。它是基于原型的面向对象语言。原型对象特点就是将自身的属性共享给新对象。这样的写法相对于其它传统面向对象语言来讲，很有一种独树一帜的感脚！非常容易让人困惑！<br>如果要生成一个对象实例，需要先定义一个构造函数，然后通过new操作符来完成。构造函数示例：</p><pre><code>//函数名和实例化构造名相同且大写（非强制，但这么写有助于区分构造函数和普通函数）function Person(name,age) {  this.name = name;  this.age = age;}Person.prototype.say = function() {  return &quot;我的名字叫&quot; + this.name+&quot;今年&quot; + this.age + &quot;岁了&quot;;}var obj=new Person(&quot;laotie&quot;,88); // 通过构造函数创建对象，必须使用 new 运算符console.log(obj.say()); // 我的名字叫laotie今年88岁了</code></pre><h4 id="构造函数生成实例的执行过程（new-关键字）"><a href="#构造函数生成实例的执行过程（new-关键字）" class="headerlink" title="构造函数生成实例的执行过程（new 关键字）"></a>构造函数生成实例的执行过程（new 关键字）</h4><p>本小节摘自 <a href="https://www.jianshu.com/p/15ac7393bc1f" target="_blank" rel="noopener">https://www.jianshu.com/p/15ac7393bc1f</a></p><pre><code>1.声明一个中间对象；2.将该中间对象的原型指向构造函数的原型；3.将构造函数的this，指向该中间对象；4.返回该中间对象，即返回实例对象。</code></pre><p>模拟 new 的执行过程</p><pre><code>// 先一本正经的创建一个构造函数，其实该函数与普通函数并无区别var Person = function(name, age) {    this.name = name;    this.age = age;    this.getName = function() {        return this.name;    }}// 将构造函数以参数形式传入function New(func) {    // 声明一个中间对象，该对象为最终返回的实例    var res = {};    if (func.prototype !== null) {        // 将实例的原型指向构造函数的原型        res.__proto__ = func.prototype;    }    // ret为构造函数执行的结果，这里通过apply，将构造函数内部的this指向修改为指向res，即为实例对象    var ret = func.apply(res, Array.prototype.slice.call(arguments, 1));    // 当我们在构造函数中明确指定了返回对象时，那么new的执行结果就是该返回对象    if ((typeof ret === &quot;object&quot; || typeof ret === &quot;function&quot;) &amp;&amp; ret !== null) {        return ret;    }    // 如果没有明确指定返回对象，则默认返回res，这个res就是实例对象    return res;}// 通过new声明创建实例，这里的p1，实际接收的正是new中返回的resvar p1 = New(Person, &#39;tom&#39;, 20);console.log(p1.getName());// 当然，这里也可以判断出实例的类型了console.log(p1 instanceof Person); // true</code></pre><h3 id="ES6的类"><a href="#ES6的类" class="headerlink" title="ES6的类"></a>ES6的类</h3><p>将之前的Person代码改为ES6的写法就会是这个样子</p><pre><code>class Person{//定义了一个名字为Person的类  constructor(name,age){//constructor是一个构造方法，用来接收参数    this.name = name;//this代表的是实例对象    this.age=age;  }  say(){//这是一个类的方法，注意千万不要加上function    return &quot;我的名字叫&quot; + this.name+&quot;今年&quot;+this.age+&quot;岁了&quot;;  }}var obj=new Person(&quot;laotie&quot;,88);console.log(obj.say());//我的名字叫laotie今年88岁了</code></pre><p>由下面代码可以看出类实质上就是一个函数。类自身指向的就是构造函数。所以可以认为ES6中的类其实就是构造函数的另外一种写法！</p><pre><code>console.log(typeof Person);//functionconsole.log(Person===Person.prototype.constructor);//true</code></pre><p>实际上类的所有方法都定义在类的prototype属性上</p><p><strong>实例的隐式原型(<code>person1.__proto__</code>)指向构造该实例的类的原型(<code>Person.prototype</code>) ，都指向类的原型对象<code>{constructor: f, say: f}</code>，而该原型对象的构造函数(<code>constructor</code>) 又反过来指向该类，即 <code>person1.__proto__.constructor === Person.prototype.constructor === Person</code></strong></p><pre><code>Person.prototype.say=function(){//定义与类中相同名字的方法。成功实现了覆盖！    return &quot;我是来证明的，你叫&quot; + this.name+&quot;今年&quot;+this.age+&quot;岁了&quot;;}var obj=new Person(&quot;laotie&quot;,88);console.log(obj.say());//我是来证明的，你叫laotie今年88岁了</code></pre><p>constructor方法是类的构造函数的默认方法，通过new命令生成对象实例时，自动调用该方法</p><pre><code>class Box{  constructor(){    console.log(&quot;啦啦啦，今天天气好晴朗&quot;);//当实例化对象时该行代码会执行。  }}var obj=new Box();</code></pre><p>constructor方法如果没有显式定义，会隐式生成一个constructor方法。所以即使你没有添加构造函数，构造函数也是存在的。constructor方法默认返回实例对象this，但是也可以指定constructor方法返回一个全新的对象，让返回的实例对象不是该类的实例</p><pre><code>class Desk{  constructor(){    this.xixi=&quot;我是一只小小小小鸟！哦&quot;;  }}class Box{  constructor(){    return new Desk();// 这里没有用this哦，直接返回一个全新的对象  }}var obj=new Box();console.log(obj.xixi);//我是一只小小小小鸟！哦</code></pre><p>constructor中定义的属性可以称为实例属性（即定义在this对象上），constructor外声明的属性都是定义在原型上的，可以称为原型属性（即定义在class上)。hasOwnProperty()函数用于判断属性是否是实例属性。其结果是一个布尔值， true说明是实例属性，false说明不是实例属性。in操作符会在通过对象能够访问给定属性时返回true,无论该属性存在于实例中还是原型中</p><pre><code>class Box{  constructor(num1,num2){    this.num1 = num1;    this.num2=num2;  }  sum(){    return num1+num2;  }}var box=new Box(12,88);box.say = () =&gt; {};console.log(box.hasOwnProperty(&quot;num1&quot;));//trueconsole.log(box.hasOwnProperty(&quot;num2&quot;));//trueconsole.log(box.hasOwnProperty(&quot;sum&quot;));//falseconsole.log(&quot;num1&quot; in box);//trueconsole.log(&quot;num2&quot; in box);//trueconsole.log(&quot;sum&quot; in box);//true</code></pre><p>类的所有实例共享一个原型对象，它们的原型都是Person.prototype，所以proto属性是相等的</p><pre><code>class Box{  constructor(num1,num2){    this.num1 = num1;    this.num2=num2;  }  sum(){    return num1+num2;  }}//box1与box2都是Box的实例。它们的__proto__都指向Box的prototype(实例的隐式原型(`__proto__`)指向构造该实例的类的原型(`prototype`) )var box1=new Box(12,88);var box2=new Box(40,60);console.log(box1.__proto__===box2.__proto__);//trueconsole.log(box1.__proto__===Box.prototype);//true</code></pre><p>由此，也可以通过proto来为类增加方法。使用实例的proto属性改写原型，会改变Class的原始定义，影响到所有实例，所以不推荐使用</p><pre><code>class Box{  constructor(num1,num2){    this.num1 = num1;    this.num2=num2;  }  sum(){    return num1+num2;  }}var box1=new Box(12,88);var box2=new Box(40,60);box1.__proto__.sub=function(){  return this.num2-this.num1;}console.log(box1.sub());//76console.log(box2.sub());//20</code></pre><p>class不存在变量提升，所以需要先定义再使用。因为ES6不会把类的声明提升到代码头部，但是ES5就不一样,ES5存在变量提升,可以先使用，然后再定义</p><pre><code>//ES5可以先使用再定义,存在变量提升new A();function A(){}//ES6不能先使用再定义,不存在变量提升 会报错new B();//B is not definedclass B{}</code></pre><p><strong>文末再次声明：本文摘抄自 <a href="https://www.jianshu.com/p/86267fab4878" target="_blank" rel="noopener">https://www.jianshu.com/p/86267fab4878</a>，转载请注明原出处</strong></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>JavaScript</tag>
+      
+      <tag>ES6</tag>
+      
+      <tag>Class</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Class中的私有属性</title>
+    <link href="/blog/2019/03/01/class-private-property/"/>
+    <url>/blog/2019/03/01/class-private-property/</url>
+    
+    <content type="html"><![CDATA[<h3 id="私有属性"><a href="#私有属性" class="headerlink" title="私有属性"></a>私有属性</h3><p>私有属性是面向对象编程（OOP）中非常常见的一个特性，满足以下特点：</p><ul><li>能被 class 内部的不同方法访问，但不能在类外部被访问</li><li>子类不能继承父类的私有属性</li></ul><h3 id="新的提案"><a href="#新的提案" class="headerlink" title="新的提案"></a>新的提案</h3><p>在 class 中，用 ‘#’ 开头的属性代表私有属性（该提案已经到Stage 3）</p><pre><code>class Foo {  #a; // 私有属性  constructor(a, b) {    this.#a = a;      this.b = b;  }}</code></pre><p><em>注：上面私有属性的声明，需要先经过Babel等编译器编译后才能正常使用</em></p><h3 id="JS模拟实现私有属性"><a href="#JS模拟实现私有属性" class="headerlink" title="JS模拟实现私有属性"></a>JS模拟实现私有属性</h3><h4 id="约定俗成"><a href="#约定俗成" class="headerlink" title="约定俗成"></a>约定俗成</h4><p>变量前加下划线 ‘_’ 前缀代表私有属性，实际还是公共属性</p><h4 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h4><p>在 constructor 作用域内定义局部变量，内部通过闭包的方式对外暴露</p><pre><code>class Foo {  constructor(a, b, c) {    this.a = a;    this.b = b;    let _c = c;    this.getC = function() {      return _c;    }    this.setC = function(val) {      _c = val;    }  }}const foo1 = new Foo(&#39;a1&#39;, &#39;b1&#39;, &#39;c1&#39;);console.log(foo1.a, foo1._c, foo1.getC()); // a1 undefined c1foo1.setC(&#39;c2&#39;)console.log(foo1.getC()); // c2</code></pre><h4 id="Symbols-amp-Getter"><a href="#Symbols-amp-Getter" class="headerlink" title="Symbols &amp; Getter"></a>Symbols &amp; Getter</h4><p>利用 Symbol 变量可以作为对象 key 的特点，可以模拟实现私有属性</p><pre><code>const FoolSymbol = (() =&gt; {  const _p = Symbol(&#39;p&#39;);  class FoolSymbol {    constructor(a, b, p) {      this.a = a;      this.b = b;      this[_p] = p;    }    getP = (val) =&gt; {      return this[_p];    }    setP = (val) =&gt; {      this[_p] = val;    }  }  return FoolSymbol;})();const foolSymbol = new FoolSymbol(&#39;a1&#39;, &#39;b1&#39;, &#39;p1&#39;);console.log(foolSymbol.getP()); // p1foolSymbol.setP(&#39;p2&#39;);console.log(foolSymbol.getP()); // p2</code></pre><p><em>对比：第二种利用闭包的方式，该属性的get 和 set 方法只能在 Class 的 constructor 内部，外部访问不到该属性，而 Symbol 可以在外部获取到，所以get 和 set 方法可以写在 constructor 外部</em></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>JavaScript</tag>
+      
+      <tag>ES6</tag>
+      
+      <tag>Class</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>CSS盒模型与正常流排版</title>
+    <link href="/blog/2019/02/13/html-dom-model/"/>
+    <url>/blog/2019/02/13/html-dom-model/</url>
+    
+    <content type="html"><![CDATA[<h2 id="一、盒模型"><a href="#一、盒模型" class="headerlink" title="一、盒模型"></a>一、盒模型</h2><p>盒子模型从独立盒子结构以及多盒之间的关系两方面理解</p><h3 id="盒子模型概念"><a href="#盒子模型概念" class="headerlink" title="盒子模型概念"></a>盒子模型概念</h3><p>独立盒子模型由：内容、border、padding、margin 四部分组成</p><ul><li>标准盒模型（w3c标准）的实际宽高 = width / height (内容宽高) + padding + border + margin</li><li>怪异盒模型（IE标准）的 weight 和 height 包含了 padding 和 border<br>怪异盒模型的实际宽高 = width / height (内容宽高 + padding + border)  + margin</li></ul><p>可以通过属性box-sizing来设置盒子模型的解析模式</p><ul><li>content-box： 默认值，border和padding不算到width范围内，可以理解为是W3c的标准模型(default)</li><li>border-box：border和padding划归到width范围内，可以理解为是IE的怪异盒模型</li><li>padding-box：将padding算入width范围</li></ul><h3 id="盒子之间的关系"><a href="#盒子之间的关系" class="headerlink" title="盒子之间的关系"></a>盒子之间的关系</h3><p>有标准流模式、“浮动”属性、“定位”属性</p><h4 id="1-标准文档流-标准流"><a href="#1-标准文档流-标准流" class="headerlink" title="1. 标准文档流 / 标准流"></a>1. 标准文档流 / 标准流</h4><p>指不使用一些特殊的排列和定位的 css 样式</p><ol><li><p>块级元素<br>在父元素中会自动换行，且跟同级的兄弟元素按照出现的顺序依次垂直排列，宽度自动铺满父元素宽度<br>div、h1 -h6、 p 、pre 、hr、menu、noframes、noscript、dl、ul、ol 、fieldset、form、table</p></li><li><p>行内元素<br>在父元素中水平排列，直到父元素的最右端才自动换行<br>span, strong, em, br, img , input, label, select, textarea, cite, a，sub，sup<br><em>行内元素设置的width和height无效，设置margin和padding只有左右边距有效</em></p></li></ol><h4 id="2-盒子在标准流中的定位"><a href="#2-盒子在标准流中的定位" class="headerlink" title="2. 盒子在标准流中的定位"></a>2. 盒子在标准流中的定位</h4><p>用margin控制盒子与盒子之间的位置关系<br>（1）两个行内元素相邻时距离：左边的margin-right+右边的margin-left；<br>（2）不是行内元素，有换行效果的块级元素：上下间的距离是两者中的较大者，如上面的margin-bottom大于下面的margin-top，距离就取margin-bottom。<br>（3）当div嵌套时，子元素的margin将以父元素的内容区域为参考。<br>“标准流”中，块级元素没有设width和height时，默认宽度会自动延伸到父元素的内容区域为限，高度为包容下内容的最小高度。如果设置了width和height，就以值来显示。<br>（4）当margin为负数时。被设为负数的往相反方向移动，甚至会覆盖在其他元素上。当块级元素间形成嵌套的父子关系时，margin设为负数可以使子元素从父元素中分离出来</p><h4 id="3-盒子的浮动（float）"><a href="#3-盒子的浮动（float）" class="headerlink" title="3. 盒子的浮动（float）"></a>3. 盒子的浮动（float）</h4><p>  设置浮动后，盒子的宽高也会有改变。要清除浮动。也就是：（块级元素设置为浮动后，将脱离“标准流”，但还占据着父元素的空间，父元素的高度不再受浮动的子元素的影响，而由没浮动的其他子元素高度确定。）</p><h4 id="4-盒子的定位（position）"><a href="#4-盒子的定位（position）" class="headerlink" title="4. 盒子的定位（position）"></a>4. 盒子的定位（position）</h4><ul><li>static（静态定位）<br>表示元素在标准流中的默认位置，无任何效果，为默认值</li><li>relative（相对定位）<br>指定为relative后还要指定一定的偏移量，水平方向left、right，垂直方向top、bottom<br>偏移量是指与它原来所处的位置的移动距离<br>可以描述如下：<br>  1）.相对定位，是以元素恩深在“标准流”中或者浮动的原本的位置为基准，通过偏移达到新位置<br>  2）.仍在标准流中，对父元素和兄弟元素无任何影响，即使由于偏移移到了父元素外边，其他元素也还在原来位置，不会顶上来</li><li>absolute（绝对定位）<br>也需要指定偏移量<br>  1）.绝对定位，从标准流中脱离，他们对其后的兄弟元素无任何影响<br>  2）.使用绝对定位的元素，以它“最近”的一个“已经定位”的“祖先元素”为基准进行偏移，如果没有已经定位的祖先元素，则以浏览器窗口为基准进行偏移<br>  3）.所谓已经定位：指position有设置，且不是设置为static的任意一种方式</li><li>fixed（固定定位）<br>以浏览器窗口为根据</li></ul><h2 id="二、标准流-正常流"><a href="#二、标准流-正常流" class="headerlink" title="二、标准流 / 正常流"></a>二、标准流 / 正常流</h2><p>感性认识：简单且符合直觉，依次排列，排不下换行</p><h4 id="拓展规则"><a href="#拓展规则" class="headerlink" title="拓展规则"></a>拓展规则</h4><ul><li>float 规则：<br>使盒占用了正常流需要的空间，可以理解为“文字环绕”</li><li>vertital-align 规则：<br>规定如何在垂直方向对齐盒</li><li>margin 规则：<br>规定了元素自身周围所需要的空间</li></ul><h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><ul><li>格式化上下文<br>CSS 计算排版和布局的算法需要依赖一个排版的“当前状态”，这个当前状态称为“格式化上下文”</li><li>盒<br>块级盒（行级盒）：使用块级格式化上下文<br>行内级盒：使用行内级格式化上下文</li></ul><h4 id="排版基本规则"><a href="#排版基本规则" class="headerlink" title="排版基本规则"></a>排版基本规则</h4><p>当我们要把正常流中的盒或文字排版，需要分为三种情况</p><ul><li>当遇到块级盒：排入块级格式化上下文</li><li>当遇到行内级盒或文字：首先尝试排入行内级格式化上下文，如果排不下，那么创建一个行盒，先将行盒排版（行盒是块级，所以到第一种情况），行盒会创建一个行内级格式化上下文。</li><li>遇到 float 盒：把盒的顶部跟当前行内级上下文上边缘对齐，然后根据 float 的方向把盒的对应边缘对到块级格式化上下文的边缘，之后重排当前行盒。</li></ul><p>部分元素会在其内部创建新的块级格式化上下文：</p><ol><li>浮动定位</li><li>绝对定位元素</li><li>非块级但仍能包含块级元素的容器（如 inline-blocks, table-cells, table-captions）</li><li>块级的能包含块级元素的容器</li></ol>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>HTML</tag>
+      
+      <tag>CSS</tag>
+      
+      <tag>盒模型</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Class中的super简析</title>
+    <link href="/blog/2018/11/21/class-super/"/>
+    <url>/blog/2018/11/21/class-super/</url>
+    
+    <content type="html"><![CDATA[<h3 id="super当作函数使用"><a href="#super当作函数使用" class="headerlink" title="super当作函数使用"></a>super当作函数使用</h3><p>super()执行父类的构造函数</p><pre><code>class A {}class B extends A {  constructor() {    super(); //ES6 要求，子类的构造函数必须执行一次super函数  }}</code></pre><p>super() 返回的是子类的实例，即 super 内部的 this 指向的是B，此时 super() 相当于 A.prototype.constructor.call(this)</p><pre><code>class A {  constructor() {    console.log(new.target.name); //new.target指向当前正在执行的函数  }}class B extends A {  constructor() {    super();  }}new A() // Anew B() // B</code></pre><p>在上面的例子中，super() 执行时，它指向的是子类的构造函数</p><h3 id="当作对象使用"><a href="#当作对象使用" class="headerlink" title="当作对象使用"></a>当作对象使用</h3><p>在普通方法中，指向父类的原型对象；在静态方法中，指向父类</p><pre><code>class A {  c() {    return 2;  }}class B extends A {  constructor() {    super();    console.log(super.c()); // 2  }}let b = new B();</code></pre><p>上面代码中，子类B当中的super.c()，就是将super当作一个对象使用。这时，super在普通方法之中，指向A.prototype，所以super.c()就相当于A.prototype.c()<br>通过super调用父类的方法时，super会绑定子类的this</p><pre><code>class A {  constructor() {    this.x = 1;  }  s() {    console.log(this.x);  }}class B extends A {  constructor() {    super();    this.x = 2;  }  m() {    super.s();  }}let b = new B();b.m() // 2</code></pre><p>上面代码中，super.s()虽然调用的是A.prototype.s()，但是A.prototype.s()会绑定子类B的this，导致输出的是2，而不是1。也就是说，实际上执行的是super.s.call(this)<br>由于绑定子类的this，所以如果通过super对某个属性赋值，这时super就是this，赋值的属性会变成子类实例的属性</p><pre><code>class A {  constructor() {    this.x = 1;  }}class B extends A {  constructor() {    super();    this.x = 2;    super.x = 3;    console.log(super.x); // undefined    console.log(this.x); // 3  }}let b = new B();</code></pre><p>上面代码中，super.x赋值为3，这时等同于对this.x赋值为3。而当读取super.x的时候，读的是A.prototype.x，所以返回undefined。<br>注意，使用super的时候，必须显式指定是作为函数、还是作为对象使用，否则会报错</p><pre><code>class A {}class B extends A {  constructor() {    super();    console.log(super); // 报错 Error: &#39;super&#39; keyword unexpected here  }}</code></pre><p>上面代码中，console.log(super)当中的super，无法看出是作为函数使用，还是作为对象使用，所以 JavaScript 引擎解析代码的时候就会报错。这时，如果能清晰地表明super的数据类型，就不会报错</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>JavaScript</tag>
+      
+      <tag>ES6</tag>
+      
+      <tag>Class</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  
+</search>

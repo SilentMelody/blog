@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog/img/avatar.png">
+  <link rel="icon" type="image/png" href="/blog/img/avatar.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="description" content="Cumulus | 李志豪前端博客">
+  <meta name="author" content="Zhihao Li">
+  <meta name="keywords" content="JS,JavaScript,CSS,HTML5">
+  <title>理解ES6中的Class（摘抄） ~ Cumulus | 李志豪前端博客</title>
+
+  <link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css"  >
+<link rel="stylesheet" href="/blog/lib/bootstrap/css/bootstrap.min.css"  >
+<link rel="stylesheet" href="/blog/lib/mdbootstrap/css/mdb.min.css"  >
+<link rel="stylesheet" href="/blog/lib/github-markdown/github-markdown.min.css"  >
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1067060_qzomjdt8bmp.css">
+
+
+
+  <link rel="stylesheet" href="/blog/lib/prettify/tomorrow-night-eighties.min.css"  >
+
+<link rel="stylesheet" href="/blog/css/main.css"  >
+
+
+  <link rel="stylesheet" href="/blog/lib/fancybox/jquery.fancybox.min.css"  >
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/blog/">&nbsp;<strong>Cumulus | 李志豪前端博客</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/">Home</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/archives/">Archives</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/categories/">Categories</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/tags/">Tags</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/about/">About</a>
+          </li>
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background"
+         style="background: url('/blog/img/default.png')no-repeat center center;
+           background-size: cover;
+           background-attachment: fixed;">
+      <div class="full-bg-img">
+        <div class="mask rgba-black-light flex-center">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <br>
+              
+                <p class="mt-3">
+                  <i class="fas fa-calendar-alt" aria-hidden="true"></i>&nbsp;
+                  Tuesday, April 2nd 2019, 9:12 pm
+                </p>
+              
+
+              <p>
+                
+                  
+                  &nbsp;<i class="far fa-chart-bar"></i>
+                  <span class="post-count">
+                    1.7k 字
+                  </span>&nbsp;
+                
+
+                
+                  
+                  &nbsp;<i class="far fa-clock"></i>
+                  <span class="post-count">
+                      7 分钟
+                  </span>&nbsp;
+                
+
+                
+                  <!-- 不蒜子统计文章PV -->
+                  
+                  &nbsp;<i class="far fa-eye" aria-hidden="true"></i>&nbsp;
+                  <span id="busuanzi_container_page_pv">
+                    <span id="busuanzi_value_page_pv"></span> 次
+                  </span>&nbsp;
+                
+              </p>
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="py-5 z-depth-3" id="board">
+        <div class="post-content mx-auto" id="post">
+          <div class="markdown-body">
+            <p><strong>！！本文摘抄自 <a href="https://www.jianshu.com/p/86267fab4878" target="_blank" rel="noopener">https://www.jianshu.com/p/86267fab4878</a>，转载请注明原出处</strong></p>
+<h3 id="传统方法实现类"><a href="#传统方法实现类" class="headerlink" title="传统方法实现类"></a>传统方法实现类</h3><p>传统的javascript中只有对象，没有类的概念。它是基于原型的面向对象语言。原型对象特点就是将自身的属性共享给新对象。这样的写法相对于其它传统面向对象语言来讲，很有一种独树一帜的感脚！非常容易让人困惑！<br>如果要生成一个对象实例，需要先定义一个构造函数，然后通过new操作符来完成。构造函数示例：</p>
+<pre><code>//函数名和实例化构造名相同且大写（非强制，但这么写有助于区分构造函数和普通函数）
+function Person(name,age) {
+  this.name = name;
+  this.age = age;
+}
+Person.prototype.say = function() {
+  return &quot;我的名字叫&quot; + this.name+&quot;今年&quot; + this.age + &quot;岁了&quot;;
+}
+var obj=new Person(&quot;laotie&quot;,88); // 通过构造函数创建对象，必须使用 new 运算符
+console.log(obj.say()); // 我的名字叫laotie今年88岁了</code></pre><h4 id="构造函数生成实例的执行过程（new-关键字）"><a href="#构造函数生成实例的执行过程（new-关键字）" class="headerlink" title="构造函数生成实例的执行过程（new 关键字）"></a>构造函数生成实例的执行过程（new 关键字）</h4><p>本小节摘自 <a href="https://www.jianshu.com/p/15ac7393bc1f" target="_blank" rel="noopener">https://www.jianshu.com/p/15ac7393bc1f</a></p>
+<pre><code>1.声明一个中间对象；
+2.将该中间对象的原型指向构造函数的原型；
+3.将构造函数的this，指向该中间对象；
+4.返回该中间对象，即返回实例对象。</code></pre><p>模拟 new 的执行过程</p>
+<pre><code>// 先一本正经的创建一个构造函数，其实该函数与普通函数并无区别
+var Person = function(name, age) {
+    this.name = name;
+    this.age = age;
+    this.getName = function() {
+        return this.name;
+    }
+}
+// 将构造函数以参数形式传入
+function New(func) {
+    // 声明一个中间对象，该对象为最终返回的实例
+    var res = {};
+    if (func.prototype !== null) {
+        // 将实例的原型指向构造函数的原型
+        res.__proto__ = func.prototype;
+    }
+    // ret为构造函数执行的结果，这里通过apply，将构造函数内部的this指向修改为指向res，即为实例对象
+    var ret = func.apply(res, Array.prototype.slice.call(arguments, 1));
+    // 当我们在构造函数中明确指定了返回对象时，那么new的执行结果就是该返回对象
+    if ((typeof ret === &quot;object&quot; || typeof ret === &quot;function&quot;) &amp;&amp; ret !== null) {
+        return ret;
+    }
+    // 如果没有明确指定返回对象，则默认返回res，这个res就是实例对象
+    return res;
+}
+// 通过new声明创建实例，这里的p1，实际接收的正是new中返回的res
+var p1 = New(Person, &#39;tom&#39;, 20);
+console.log(p1.getName());
+// 当然，这里也可以判断出实例的类型了
+console.log(p1 instanceof Person); // true</code></pre><h3 id="ES6的类"><a href="#ES6的类" class="headerlink" title="ES6的类"></a>ES6的类</h3><p>将之前的Person代码改为ES6的写法就会是这个样子</p>
+<pre><code>class Person{//定义了一个名字为Person的类
+  constructor(name,age){//constructor是一个构造方法，用来接收参数
+    this.name = name;//this代表的是实例对象
+    this.age=age;
+  }
+  say(){//这是一个类的方法，注意千万不要加上function
+    return &quot;我的名字叫&quot; + this.name+&quot;今年&quot;+this.age+&quot;岁了&quot;;
+  }
+}
+var obj=new Person(&quot;laotie&quot;,88);
+console.log(obj.say());//我的名字叫laotie今年88岁了</code></pre><p>由下面代码可以看出类实质上就是一个函数。类自身指向的就是构造函数。所以可以认为ES6中的类其实就是构造函数的另外一种写法！</p>
+<pre><code>console.log(typeof Person);//function
+console.log(Person===Person.prototype.constructor);//true</code></pre><p>实际上类的所有方法都定义在类的prototype属性上</p>
+<p><strong>实例的隐式原型(<code>person1.__proto__</code>)指向构造该实例的类的原型(<code>Person.prototype</code>) ，都指向类的原型对象<code>{constructor: f, say: f}</code>，而该原型对象的构造函数(<code>constructor</code>) 又反过来指向该类，即 <code>person1.__proto__.constructor === Person.prototype.constructor === Person</code></strong></p>
+<pre><code>Person.prototype.say=function(){//定义与类中相同名字的方法。成功实现了覆盖！
+    return &quot;我是来证明的，你叫&quot; + this.name+&quot;今年&quot;+this.age+&quot;岁了&quot;;
+}
+var obj=new Person(&quot;laotie&quot;,88);
+console.log(obj.say());//我是来证明的，你叫laotie今年88岁了</code></pre><p>constructor方法是类的构造函数的默认方法，通过new命令生成对象实例时，自动调用该方法</p>
+<pre><code>class Box{
+  constructor(){
+    console.log(&quot;啦啦啦，今天天气好晴朗&quot;);//当实例化对象时该行代码会执行。
+  }
+}
+var obj=new Box();</code></pre><p>constructor方法如果没有显式定义，会隐式生成一个constructor方法。所以即使你没有添加构造函数，构造函数也是存在的。constructor方法默认返回实例对象this，但是也可以指定constructor方法返回一个全新的对象，让返回的实例对象不是该类的实例</p>
+<pre><code>class Desk{
+  constructor(){
+    this.xixi=&quot;我是一只小小小小鸟！哦&quot;;
+  }
+}
+class Box{
+  constructor(){
+    return new Desk();// 这里没有用this哦，直接返回一个全新的对象
+  }
+}
+var obj=new Box();
+console.log(obj.xixi);//我是一只小小小小鸟！哦</code></pre><p>constructor中定义的属性可以称为实例属性（即定义在this对象上），constructor外声明的属性都是定义在原型上的，可以称为原型属性（即定义在class上)。hasOwnProperty()函数用于判断属性是否是实例属性。其结果是一个布尔值， true说明是实例属性，false说明不是实例属性。in操作符会在通过对象能够访问给定属性时返回true,无论该属性存在于实例中还是原型中</p>
+<pre><code>class Box{
+  constructor(num1,num2){
+    this.num1 = num1;
+    this.num2=num2;
+  }
+  sum(){
+    return num1+num2;
+  }
+}
+var box=new Box(12,88);
+box.say = () =&gt; {};
+console.log(box.hasOwnProperty(&quot;num1&quot;));//true
+console.log(box.hasOwnProperty(&quot;num2&quot;));//true
+console.log(box.hasOwnProperty(&quot;sum&quot;));//false
+console.log(&quot;num1&quot; in box);//true
+console.log(&quot;num2&quot; in box);//true
+console.log(&quot;sum&quot; in box);//true</code></pre><p>类的所有实例共享一个原型对象，它们的原型都是Person.prototype，所以proto属性是相等的</p>
+<pre><code>class Box{
+  constructor(num1,num2){
+    this.num1 = num1;
+    this.num2=num2;
+  }
+  sum(){
+    return num1+num2;
+  }
+}
+//box1与box2都是Box的实例。它们的__proto__都指向Box的prototype(实例的隐式原型(`__proto__`)指向构造该实例的类的原型(`prototype`) )
+var box1=new Box(12,88);
+var box2=new Box(40,60);
+console.log(box1.__proto__===box2.__proto__);//true
+console.log(box1.__proto__===Box.prototype);//true</code></pre><p>由此，也可以通过proto来为类增加方法。使用实例的proto属性改写原型，会改变Class的原始定义，影响到所有实例，所以不推荐使用</p>
+<pre><code>class Box{
+  constructor(num1,num2){
+    this.num1 = num1;
+    this.num2=num2;
+  }
+  sum(){
+    return num1+num2;
+  }
+}
+var box1=new Box(12,88);
+var box2=new Box(40,60);
+box1.__proto__.sub=function(){
+  return this.num2-this.num1;
+}
+console.log(box1.sub());//76
+console.log(box2.sub());//20</code></pre><p>class不存在变量提升，所以需要先定义再使用。因为ES6不会把类的声明提升到代码头部，但是ES5就不一样,ES5存在变量提升,可以先使用，然后再定义</p>
+<pre><code>//ES5可以先使用再定义,存在变量提升
+new A();
+function A(){
+
+}
+//ES6不能先使用再定义,不存在变量提升 会报错
+new B();//B is not defined
+class B{
+
+}</code></pre><p><strong>文末再次声明：本文摘抄自 <a href="https://www.jianshu.com/p/86267fab4878" target="_blank" rel="noopener">https://www.jianshu.com/p/86267fab4878</a>，转载请注明原出处</strong></p>
+
+            <hr>
+          </div>
+          <br>
+          <div>
+            <p>
+            
+              <span>
+                <i class="iconfont icon-inbox"></i>
+                
+                  <a class="hover-with-bg" href="/categories/%E5%BC%80%E5%8F%91">开发</a>
+                  &nbsp;
+                
+              </span>&nbsp;&nbsp;
+            
+            
+              <span>
+                <i class="iconfont icon-tag"></i>
+                
+                  <a class="hover-with-bg" href="/tags/JavaScript">JavaScript</a>
+                
+                  <a class="hover-with-bg" href="/tags/ES6">ES6</a>
+                
+                  <a class="hover-with-bg" href="/tags/Class">Class</a>
+                
+              </span>
+            
+            </p>
+            
+              <p class="note note-warning">本博客文章为自用，部分内容来源其它文章博客，请勿转载或用作商业用途！</p>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-none d-lg-block col-lg-2 toc-container">
+      
+  <div id="toc">
+    <p class="h4"><i class="far fa-list-alt"></i>&nbsp;TOC</p>
+    <div id="tocbot"></div>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- custom -->
+
+
+<!-- Comments -->
+<div class="col-lg-7 mx-auto nopadding-md">
+  <div class="container comments mx-auto" id="comments">
+    
+  </div>
+</div>
+
+    
+  </main>
+
+  
+    <a class="z-depth-1" id="scroll-top-button" href="#" role="button">
+      <i class="fa fa-chevron-up scroll-top-arrow" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  <footer class="mt-4">
+  <div class="text-center py-3">
+    <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><b>Hexo</b></a>
+    <i class="iconfont icon-love"></i>
+    <b>lzh</b>
+    <br>
+
+    
+  
+    <!-- 不蒜子统计PV -->
+    
+    &nbsp;<span id="busuanzi_container_site_pv">总访问量 
+          <span id="busuanzi_value_site_pv"></span> 次</span>&nbsp;
+  
+  
+    <!-- 不蒜子统计UV -->
+    
+    &nbsp;<span id="busuanzi_container_site_uv">总访客数 
+            <span id="busuanzi_value_site_uv"></span> 人</span>&nbsp;
+  
+  <br>
+
+
+
+    
+  <!-- 备案信息 -->
+  <a href="http://beian.miit.gov.cn/" target="_blank"
+     rel="nofollow noopener"></a>
+  
+
+
+
+    <!-- cnzz Analytics icon -->
+    
+
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="/blog/lib/jquery/jquery.min.js" ></script>
+<script src="/blog/lib/popper/popper.min.js" ></script>
+<script src="/blog/lib/bootstrap/js/bootstrap.min.js" ></script>
+<script src="/blog/lib/mdbootstrap/js/mdb.min.js" ></script>
+<script src="/blog/js/main.js" ></script>
+
+
+  <script src="/blog/js/lazyload.js" ></script>
+
+
+
+  
+    <script src="/blog/lib/tocbot/tocbot.min.js" ></script>
+  
+  <script src="/blog/js/post.js" ></script>
+
+
+
+  <script src="/blog/lib/smooth-scroll/smooth-scroll.min.js" ></script>
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+<!-- Plugins -->
+
+
+  
+
+  
+
+  
+
+  
+
+  <!-- cnzz Analytics -->
+  
+
+
+
+  <script src="/blog/lib/prettify/prettify.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      $('pre').addClass('prettyprint  ');
+      prettyPrint();
+    })
+  </script>
+
+
+
+  <script src="/blog/lib/typed/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "理解ES6中的Class（摘抄）&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script src="/blog/lib/anchor/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "false",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script src="/blog/js/local-search.js" ></script>
+  <script>
+    var path = "/blog/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      getSearchFile(path);
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script src="/blog/lib/fancybox/jquery.fancybox.min.js" ></script>
+  <script>
+    $("#post img:not(.no-zoom img, img[no-zoom])").each(
+      function () {
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "images");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

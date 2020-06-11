@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog/img/avatar.png">
+  <link rel="icon" type="image/png" href="/blog/img/avatar.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="description" content="Cumulus | 李志豪前端博客">
+  <meta name="author" content="Zhihao Li">
+  <meta name="keywords" content="JS,JavaScript,CSS,HTML5">
+  <title>前端项目review ~ Cumulus | 李志豪前端博客</title>
+
+  <link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css"  >
+<link rel="stylesheet" href="/blog/lib/bootstrap/css/bootstrap.min.css"  >
+<link rel="stylesheet" href="/blog/lib/mdbootstrap/css/mdb.min.css"  >
+<link rel="stylesheet" href="/blog/lib/github-markdown/github-markdown.min.css"  >
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1067060_qzomjdt8bmp.css">
+
+
+
+  <link rel="stylesheet" href="/blog/lib/prettify/tomorrow-night-eighties.min.css"  >
+
+<link rel="stylesheet" href="/blog/css/main.css"  >
+
+
+  <link rel="stylesheet" href="/blog/lib/fancybox/jquery.fancybox.min.css"  >
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/blog/">&nbsp;<strong>Cumulus | 李志豪前端博客</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/">Home</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/archives/">Archives</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/categories/">Categories</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/tags/">Tags</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/about/">About</a>
+          </li>
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background"
+         style="background: url('/blog/img/default.png')no-repeat center center;
+           background-size: cover;
+           background-attachment: fixed;">
+      <div class="full-bg-img">
+        <div class="mask rgba-black-light flex-center">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <br>
+              
+                <p class="mt-3">
+                  <i class="fas fa-calendar-alt" aria-hidden="true"></i>&nbsp;
+                  Monday, April 15th 2019, 8:16 pm
+                </p>
+              
+
+              <p>
+                
+                  
+                  &nbsp;<i class="far fa-chart-bar"></i>
+                  <span class="post-count">
+                    320 字
+                  </span>&nbsp;
+                
+
+                
+                  
+                  &nbsp;<i class="far fa-clock"></i>
+                  <span class="post-count">
+                      1 分钟
+                  </span>&nbsp;
+                
+
+                
+                  <!-- 不蒜子统计文章PV -->
+                  
+                  &nbsp;<i class="far fa-eye" aria-hidden="true"></i>&nbsp;
+                  <span id="busuanzi_container_page_pv">
+                    <span id="busuanzi_value_page_pv"></span> 次
+                  </span>&nbsp;
+                
+              </p>
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="py-5 z-depth-3" id="board">
+        <div class="post-content mx-auto" id="post">
+          <div class="markdown-body">
+            <h3 id="前端项目-review"><a href="#前端项目-review" class="headerlink" title="前端项目 review"></a>前端项目 review</h3><p>主要分两步：</p>
+<ul>
+<li>整体梳理</li>
+<li>详细 code review </li>
+</ul>
+<h4 id="整体梳理"><a href="#整体梳理" class="headerlink" title="整体梳理"></a>整体梳理</h4><p>对业务流程、边界、项目组织做现状整理，找出问题并产出改造方案</p>
+<h5 id="1-组织形式"><a href="#1-组织形式" class="headerlink" title="1.组织形式"></a>1.组织形式</h5><ul>
+<li>根据业务划分，指派业务模块owner</li>
+<li>每周一、三晚上6点半，争取一小时内解决</li>
+</ul>
+<h5 id="2-Review-内容"><a href="#2-Review-内容" class="headerlink" title="2.Review 内容"></a>2.Review 内容</h5><ul>
+<li>业务流程</li>
+<li>应用及业务边界</li>
+<li>输入输出</li>
+<li>项目组织（同一个需求分散在不同的项目）</li>
+</ul>
+<h5 id="3-Review-结果"><a href="#3-Review-结果" class="headerlink" title="3.Review 结果"></a>3.Review 结果</h5><ul>
+<li>业务流程图，由架构师和负责人将业务流程串联合并，并标出核心关键点，容易忽略的点</li>
+<li>项目组织结构图，由架构师和负责人指出不合理的地方及改进意见</li>
+<li>边界及输入输出文档</li>
+</ul>
+<h5 id="4-Review-目标"><a href="#4-Review-目标" class="headerlink" title="4.Review 目标"></a>4.Review 目标</h5><ul>
+<li>清理疏通，扫除雷区</li>
+<li>文档留存，有据可考</li>
+<li>共同完善，及时更新</li>
+</ul>
+<h4 id="code-review"><a href="#code-review" class="headerlink" title="code review"></a>code review</h4><h5 id="1-组织形式-1"><a href="#1-组织形式-1" class="headerlink" title="1.组织形式"></a>1.组织形式</h5><ul>
+<li>以业务（项目）为单位</li>
+<li>每 1 周 2 次，1~2人，控制在一小时</li>
+<li>业务交叉</li>
+</ul>
+<h5 id="2-Review-内容-1"><a href="#2-Review-内容-1" class="headerlink" title="2.Review 内容"></a>2.Review 内容</h5><ul>
+<li>背景、功能</li>
+<li>系统设计、功能模块、目录设计等</li>
+<li>代码实现</li>
+<li>代码风格</li>
+<li>代码逻辑</li>
+<li>注释</li>
+<li>错误处理</li>
+<li>UT（单元测试）</li>
+</ul>
+<h5 id="3-Review-结果-1"><a href="#3-Review-结果-1" class="headerlink" title="3.Review 结果"></a>3.Review 结果</h5><ul>
+<li>结果文档 Good &amp; Bad point</li>
+<li>改进 issue/owner/时间点</li>
+</ul>
+
+            <hr>
+          </div>
+          <br>
+          <div>
+            <p>
+            
+              <span>
+                <i class="iconfont icon-inbox"></i>
+                
+                  <a class="hover-with-bg" href="/categories/%E5%BC%80%E5%8F%91">开发</a>
+                  &nbsp;
+                
+              </span>&nbsp;&nbsp;
+            
+            
+              <span>
+                <i class="iconfont icon-tag"></i>
+                
+                  <a class="hover-with-bg" href="/tags/%E4%BB%A3%E7%A0%81%E8%B4%A8%E9%87%8F">代码质量</a>
+                
+              </span>
+            
+            </p>
+            
+              <p class="note note-warning">本博客文章为自用，部分内容来源其它文章博客，请勿转载或用作商业用途！</p>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-none d-lg-block col-lg-2 toc-container">
+      
+  <div id="toc">
+    <p class="h4"><i class="far fa-list-alt"></i>&nbsp;TOC</p>
+    <div id="tocbot"></div>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- custom -->
+
+
+<!-- Comments -->
+<div class="col-lg-7 mx-auto nopadding-md">
+  <div class="container comments mx-auto" id="comments">
+    
+  </div>
+</div>
+
+    
+  </main>
+
+  
+    <a class="z-depth-1" id="scroll-top-button" href="#" role="button">
+      <i class="fa fa-chevron-up scroll-top-arrow" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  <footer class="mt-4">
+  <div class="text-center py-3">
+    <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><b>Hexo</b></a>
+    <i class="iconfont icon-love"></i>
+    <b>lzh</b>
+    <br>
+
+    
+  
+    <!-- 不蒜子统计PV -->
+    
+    &nbsp;<span id="busuanzi_container_site_pv">总访问量 
+          <span id="busuanzi_value_site_pv"></span> 次</span>&nbsp;
+  
+  
+    <!-- 不蒜子统计UV -->
+    
+    &nbsp;<span id="busuanzi_container_site_uv">总访客数 
+            <span id="busuanzi_value_site_uv"></span> 人</span>&nbsp;
+  
+  <br>
+
+
+
+    
+  <!-- 备案信息 -->
+  <a href="http://beian.miit.gov.cn/" target="_blank"
+     rel="nofollow noopener"></a>
+  
+
+
+
+    <!-- cnzz Analytics icon -->
+    
+
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="/blog/lib/jquery/jquery.min.js" ></script>
+<script src="/blog/lib/popper/popper.min.js" ></script>
+<script src="/blog/lib/bootstrap/js/bootstrap.min.js" ></script>
+<script src="/blog/lib/mdbootstrap/js/mdb.min.js" ></script>
+<script src="/blog/js/main.js" ></script>
+
+
+  <script src="/blog/js/lazyload.js" ></script>
+
+
+
+  
+    <script src="/blog/lib/tocbot/tocbot.min.js" ></script>
+  
+  <script src="/blog/js/post.js" ></script>
+
+
+
+  <script src="/blog/lib/smooth-scroll/smooth-scroll.min.js" ></script>
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+<!-- Plugins -->
+
+
+  
+
+  
+
+  
+
+  
+
+  <!-- cnzz Analytics -->
+  
+
+
+
+  <script src="/blog/lib/prettify/prettify.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      $('pre').addClass('prettyprint  ');
+      prettyPrint();
+    })
+  </script>
+
+
+
+  <script src="/blog/lib/typed/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "前端项目review&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script src="/blog/lib/anchor/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "false",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script src="/blog/js/local-search.js" ></script>
+  <script>
+    var path = "/blog/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      getSearchFile(path);
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script src="/blog/lib/fancybox/jquery.fancybox.min.js" ></script>
+  <script>
+    $("#post img:not(.no-zoom img, img[no-zoom])").each(
+      function () {
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "images");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

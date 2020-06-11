@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog/img/avatar.png">
+  <link rel="icon" type="image/png" href="/blog/img/avatar.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="description" content="Cumulus | 李志豪前端博客">
+  <meta name="author" content="Zhihao Li">
+  <meta name="keywords" content="JS,JavaScript,CSS,HTML5">
+  <title>CSS盒模型与正常流排版 ~ Cumulus | 李志豪前端博客</title>
+
+  <link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css"  >
+<link rel="stylesheet" href="/blog/lib/bootstrap/css/bootstrap.min.css"  >
+<link rel="stylesheet" href="/blog/lib/mdbootstrap/css/mdb.min.css"  >
+<link rel="stylesheet" href="/blog/lib/github-markdown/github-markdown.min.css"  >
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1067060_qzomjdt8bmp.css">
+
+
+
+  <link rel="stylesheet" href="/blog/lib/prettify/tomorrow-night-eighties.min.css"  >
+
+<link rel="stylesheet" href="/blog/css/main.css"  >
+
+
+  <link rel="stylesheet" href="/blog/lib/fancybox/jquery.fancybox.min.css"  >
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/blog/">&nbsp;<strong>Cumulus | 李志豪前端博客</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/">Home</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/archives/">Archives</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/categories/">Categories</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/tags/">Tags</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/about/">About</a>
+          </li>
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background"
+         style="background: url('/blog/img/default.png')no-repeat center center;
+           background-size: cover;
+           background-attachment: fixed;">
+      <div class="full-bg-img">
+        <div class="mask rgba-black-light flex-center">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <br>
+              
+                <p class="mt-3">
+                  <i class="fas fa-calendar-alt" aria-hidden="true"></i>&nbsp;
+                  Wednesday, February 13th 2019, 8:33 pm
+                </p>
+              
+
+              <p>
+                
+                  
+                  &nbsp;<i class="far fa-chart-bar"></i>
+                  <span class="post-count">
+                    1.4k 字
+                  </span>&nbsp;
+                
+
+                
+                  
+                  &nbsp;<i class="far fa-clock"></i>
+                  <span class="post-count">
+                      5 分钟
+                  </span>&nbsp;
+                
+
+                
+                  <!-- 不蒜子统计文章PV -->
+                  
+                  &nbsp;<i class="far fa-eye" aria-hidden="true"></i>&nbsp;
+                  <span id="busuanzi_container_page_pv">
+                    <span id="busuanzi_value_page_pv"></span> 次
+                  </span>&nbsp;
+                
+              </p>
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="py-5 z-depth-3" id="board">
+        <div class="post-content mx-auto" id="post">
+          <div class="markdown-body">
+            <h2 id="一、盒模型"><a href="#一、盒模型" class="headerlink" title="一、盒模型"></a>一、盒模型</h2><p>盒子模型从独立盒子结构以及多盒之间的关系两方面理解</p>
+<h3 id="盒子模型概念"><a href="#盒子模型概念" class="headerlink" title="盒子模型概念"></a>盒子模型概念</h3><p>独立盒子模型由：内容、border、padding、margin 四部分组成</p>
+<ul>
+<li>标准盒模型（w3c标准）的实际宽高 = width / height (内容宽高) + padding + border + margin</li>
+<li>怪异盒模型（IE标准）的 weight 和 height 包含了 padding 和 border<br>怪异盒模型的实际宽高 = width / height (内容宽高 + padding + border)  + margin</li>
+</ul>
+<p>可以通过属性box-sizing来设置盒子模型的解析模式</p>
+<ul>
+<li>content-box： 默认值，border和padding不算到width范围内，可以理解为是W3c的标准模型(default)</li>
+<li>border-box：border和padding划归到width范围内，可以理解为是IE的怪异盒模型</li>
+<li>padding-box：将padding算入width范围</li>
+</ul>
+<h3 id="盒子之间的关系"><a href="#盒子之间的关系" class="headerlink" title="盒子之间的关系"></a>盒子之间的关系</h3><p>有标准流模式、“浮动”属性、“定位”属性</p>
+<h4 id="1-标准文档流-标准流"><a href="#1-标准文档流-标准流" class="headerlink" title="1. 标准文档流 / 标准流"></a>1. 标准文档流 / 标准流</h4><p>指不使用一些特殊的排列和定位的 css 样式</p>
+<ol>
+<li><p>块级元素<br>在父元素中会自动换行，且跟同级的兄弟元素按照出现的顺序依次垂直排列，宽度自动铺满父元素宽度<br>div、h1 -h6、 p 、pre 、hr、menu、noframes、noscript、dl、ul、ol 、fieldset、form、table</p>
+</li>
+<li><p>行内元素<br>在父元素中水平排列，直到父元素的最右端才自动换行<br>span, strong, em, br, img , input, label, select, textarea, cite, a，sub，sup<br><em>行内元素设置的width和height无效，设置margin和padding只有左右边距有效</em></p>
+</li>
+</ol>
+<h4 id="2-盒子在标准流中的定位"><a href="#2-盒子在标准流中的定位" class="headerlink" title="2. 盒子在标准流中的定位"></a>2. 盒子在标准流中的定位</h4><p>用margin控制盒子与盒子之间的位置关系<br>（1）两个行内元素相邻时距离：左边的margin-right+右边的margin-left；<br>（2）不是行内元素，有换行效果的块级元素：上下间的距离是两者中的较大者，如上面的margin-bottom大于下面的margin-top，距离就取margin-bottom。<br>（3）当div嵌套时，子元素的margin将以父元素的内容区域为参考。<br>“标准流”中，块级元素没有设width和height时，默认宽度会自动延伸到父元素的内容区域为限，高度为包容下内容的最小高度。如果设置了width和height，就以值来显示。<br>（4）当margin为负数时。被设为负数的往相反方向移动，甚至会覆盖在其他元素上。当块级元素间形成嵌套的父子关系时，margin设为负数可以使子元素从父元素中分离出来</p>
+<h4 id="3-盒子的浮动（float）"><a href="#3-盒子的浮动（float）" class="headerlink" title="3. 盒子的浮动（float）"></a>3. 盒子的浮动（float）</h4><p>  设置浮动后，盒子的宽高也会有改变。要清除浮动。也就是：（块级元素设置为浮动后，将脱离“标准流”，但还占据着父元素的空间，父元素的高度不再受浮动的子元素的影响，而由没浮动的其他子元素高度确定。）</p>
+<h4 id="4-盒子的定位（position）"><a href="#4-盒子的定位（position）" class="headerlink" title="4. 盒子的定位（position）"></a>4. 盒子的定位（position）</h4><ul>
+<li>static（静态定位）<br>表示元素在标准流中的默认位置，无任何效果，为默认值</li>
+<li>relative（相对定位）<br>指定为relative后还要指定一定的偏移量，水平方向left、right，垂直方向top、bottom<br>偏移量是指与它原来所处的位置的移动距离<br>可以描述如下：<br>  1）.相对定位，是以元素恩深在“标准流”中或者浮动的原本的位置为基准，通过偏移达到新位置<br>  2）.仍在标准流中，对父元素和兄弟元素无任何影响，即使由于偏移移到了父元素外边，其他元素也还在原来位置，不会顶上来</li>
+<li>absolute（绝对定位）<br>也需要指定偏移量<br>  1）.绝对定位，从标准流中脱离，他们对其后的兄弟元素无任何影响<br>  2）.使用绝对定位的元素，以它“最近”的一个“已经定位”的“祖先元素”为基准进行偏移，如果没有已经定位的祖先元素，则以浏览器窗口为基准进行偏移<br>  3）.所谓已经定位：指position有设置，且不是设置为static的任意一种方式</li>
+<li>fixed（固定定位）<br>以浏览器窗口为根据</li>
+</ul>
+<h2 id="二、标准流-正常流"><a href="#二、标准流-正常流" class="headerlink" title="二、标准流 / 正常流"></a>二、标准流 / 正常流</h2><p>感性认识：简单且符合直觉，依次排列，排不下换行</p>
+<h4 id="拓展规则"><a href="#拓展规则" class="headerlink" title="拓展规则"></a>拓展规则</h4><ul>
+<li>float 规则：<br>使盒占用了正常流需要的空间，可以理解为“文字环绕”</li>
+<li>vertital-align 规则：<br>规定如何在垂直方向对齐盒</li>
+<li>margin 规则：<br>规定了元素自身周围所需要的空间</li>
+</ul>
+<h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><ul>
+<li>格式化上下文<br>CSS 计算排版和布局的算法需要依赖一个排版的“当前状态”，这个当前状态称为“格式化上下文”</li>
+<li>盒<br>块级盒（行级盒）：使用块级格式化上下文<br>行内级盒：使用行内级格式化上下文</li>
+</ul>
+<h4 id="排版基本规则"><a href="#排版基本规则" class="headerlink" title="排版基本规则"></a>排版基本规则</h4><p>当我们要把正常流中的盒或文字排版，需要分为三种情况</p>
+<ul>
+<li>当遇到块级盒：排入块级格式化上下文</li>
+<li>当遇到行内级盒或文字：首先尝试排入行内级格式化上下文，如果排不下，那么创建一个行盒，先将行盒排版（行盒是块级，所以到第一种情况），行盒会创建一个行内级格式化上下文。</li>
+<li>遇到 float 盒：把盒的顶部跟当前行内级上下文上边缘对齐，然后根据 float 的方向把盒的对应边缘对到块级格式化上下文的边缘，之后重排当前行盒。</li>
+</ul>
+<p>部分元素会在其内部创建新的块级格式化上下文：</p>
+<ol>
+<li>浮动定位</li>
+<li>绝对定位元素</li>
+<li>非块级但仍能包含块级元素的容器（如 inline-blocks, table-cells, table-captions）</li>
+<li>块级的能包含块级元素的容器</li>
+</ol>
+
+            <hr>
+          </div>
+          <br>
+          <div>
+            <p>
+            
+              <span>
+                <i class="iconfont icon-inbox"></i>
+                
+                  <a class="hover-with-bg" href="/categories/%E5%BC%80%E5%8F%91">开发</a>
+                  &nbsp;
+                
+              </span>&nbsp;&nbsp;
+            
+            
+              <span>
+                <i class="iconfont icon-tag"></i>
+                
+                  <a class="hover-with-bg" href="/tags/HTML">HTML</a>
+                
+                  <a class="hover-with-bg" href="/tags/CSS">CSS</a>
+                
+                  <a class="hover-with-bg" href="/tags/%E7%9B%92%E6%A8%A1%E5%9E%8B">盒模型</a>
+                
+              </span>
+            
+            </p>
+            
+              <p class="note note-warning">本博客文章为自用，部分内容来源其它文章博客，请勿转载或用作商业用途！</p>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-none d-lg-block col-lg-2 toc-container">
+      
+  <div id="toc">
+    <p class="h4"><i class="far fa-list-alt"></i>&nbsp;TOC</p>
+    <div id="tocbot"></div>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- custom -->
+
+
+<!-- Comments -->
+<div class="col-lg-7 mx-auto nopadding-md">
+  <div class="container comments mx-auto" id="comments">
+    
+  </div>
+</div>
+
+    
+  </main>
+
+  
+    <a class="z-depth-1" id="scroll-top-button" href="#" role="button">
+      <i class="fa fa-chevron-up scroll-top-arrow" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  <footer class="mt-4">
+  <div class="text-center py-3">
+    <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><b>Hexo</b></a>
+    <i class="iconfont icon-love"></i>
+    <b>lzh</b>
+    <br>
+
+    
+  
+    <!-- 不蒜子统计PV -->
+    
+    &nbsp;<span id="busuanzi_container_site_pv">总访问量 
+          <span id="busuanzi_value_site_pv"></span> 次</span>&nbsp;
+  
+  
+    <!-- 不蒜子统计UV -->
+    
+    &nbsp;<span id="busuanzi_container_site_uv">总访客数 
+            <span id="busuanzi_value_site_uv"></span> 人</span>&nbsp;
+  
+  <br>
+
+
+
+    
+  <!-- 备案信息 -->
+  <a href="http://beian.miit.gov.cn/" target="_blank"
+     rel="nofollow noopener"></a>
+  
+
+
+
+    <!-- cnzz Analytics icon -->
+    
+
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="/blog/lib/jquery/jquery.min.js" ></script>
+<script src="/blog/lib/popper/popper.min.js" ></script>
+<script src="/blog/lib/bootstrap/js/bootstrap.min.js" ></script>
+<script src="/blog/lib/mdbootstrap/js/mdb.min.js" ></script>
+<script src="/blog/js/main.js" ></script>
+
+
+  <script src="/blog/js/lazyload.js" ></script>
+
+
+
+  
+    <script src="/blog/lib/tocbot/tocbot.min.js" ></script>
+  
+  <script src="/blog/js/post.js" ></script>
+
+
+
+  <script src="/blog/lib/smooth-scroll/smooth-scroll.min.js" ></script>
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+<!-- Plugins -->
+
+
+  
+
+  
+
+  
+
+  
+
+  <!-- cnzz Analytics -->
+  
+
+
+
+  <script src="/blog/lib/prettify/prettify.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      $('pre').addClass('prettyprint  ');
+      prettyPrint();
+    })
+  </script>
+
+
+
+  <script src="/blog/lib/typed/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "CSS盒模型与正常流排版&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script src="/blog/lib/anchor/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "false",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script src="/blog/js/local-search.js" ></script>
+  <script>
+    var path = "/blog/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      getSearchFile(path);
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script src="/blog/lib/fancybox/jquery.fancybox.min.js" ></script>
+  <script>
+    $("#post img:not(.no-zoom img, img[no-zoom])").each(
+      function () {
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "images");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
